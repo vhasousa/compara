@@ -1,0 +1,85 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Compara Documentation",
+    "description": "This is an API",
+    "version": "1.0.0",
+    "contact": {
+      "email": "vitorhugo_as@hotmail.com"
+    }
+  },
+  "paths": {
+    "/brands": {
+      "post": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "Create a brand",
+        "description": "Create a new brand",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "Brand name"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "0aee779e-e4a7-4bd1-a9d1-c9b2381bc8d8",
+                    "name": "Brand name",
+                    "createdAt": "2021-10-01T22:47:33.285Z"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Brands"
+        ],
+        "summary": "List brands",
+        "description": "List all the brands",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "1feb83ac-e025-4144-bfc7-ebe3b60f1953",
+                      "name": "Colgate",
+                      "created_at": "2023-01-28T18:08:40.318Z"
+                    },
+                    {
+                      "id": "4d25db38-7144-443c-a6d1-f311142e2385",
+                      "name": "Seara",
+                      "created_at": "2023-01-28T19:04:48.734Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
