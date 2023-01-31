@@ -13,7 +13,16 @@ datasource db {
 model Brand {
   id          String      @id     @default(uuid())
   name        String      @unique
-  created_at  DateTime            @default(now())
+  createdAt  DateTime            @default(now()) @map("created_at")
 
   @@map("brands")
+}
+
+model Category {
+  id            String      @id     @default(uuid())
+  name          String      @unique
+  description   String?             
+  createdAt    DateTime             @default(now()) @map("created_at")
+
+  @@map("categories")
 }

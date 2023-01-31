@@ -15,7 +15,7 @@ class BrandsRepositoryInMemory implements IBrandsRepository {
     const brand: Brand = {
       id: uuidV4(),
       name,
-      created_at: new Date()
+      createdAt: new Date()
     }
 
     this.brands.push(brand);
