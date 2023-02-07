@@ -6,9 +6,9 @@ class BrandsRepository implements IBrandsRepository {
   private prisma = new PrismaClient();
 
   async list(): Promise<Brand[]> {
-    const services = await this.prisma.brand.findMany();
+    const brands = await this.prisma.brand.findMany();
 
-    return services;
+    return brands;
   }
 
   async create({ name }: ICreateBrandDTO): Promise<Brand> {
@@ -25,6 +25,16 @@ class BrandsRepository implements IBrandsRepository {
     const brand = await this.prisma.brand.findUnique({
       where: {
         name
+      }
+    });
+
+    return brand;
+  }
+
+  async findById(id: string): Promise<Brand> {
+    const brand = await this.prisma.brand.findUnique({
+      where: {
+        id
       }
     });
 

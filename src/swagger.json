@@ -80,6 +80,259 @@
           }
         }
       }
+    },
+    "/categories": {
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Create a category",
+        "description": "Category is the segment of the product in grocery store. For example, noodle is from the food category.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "Category name",
+                  "description": "Category description"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "7e5d7dcf-fd35-4602-b618-28c4a3988418",
+                    "name": "Alimentos",
+                    "description": "Produtos para consumo",
+                    "createdAt": "2023-02-01T15:18:05.036Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "type": "category.already.exists",
+                    "field": "name",
+                    "message": "Esse marca já foi cadastrada."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "List categories",
+        "description": "List all the categories",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "7e5d7dcf-fd35-4602-b618-28c4a3988418",
+                      "name": "Alimentos",
+                      "description": "Produtos para consumo",
+                      "createdAt": "2023-02-01T15:18:05.036Z"
+                    },
+                    {
+                      "id": "7e5d7dcf-fd35-4602-b618-28c4a3988418",
+                      "name": "Alimentos",
+                      "description": "Produtos para consumo",
+                      "createdAt": "2023-02-01T15:18:05.036Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Create a product",
+        "description": "Create a product",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "barCode": {
+                    "type": "string"
+                  },
+                  "volume": {
+                    "type": "string"
+                  },
+                  "brandId": {
+                    "type": "string"
+                  },
+                  "categoryId": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "name": "Miojo",
+                  "description": "Sabor Carne",
+                  "measurementUnitId": "30a50f6d-f480-4e08-a6f3-ee12bfa0de19",
+                  "barCode": "7891079000228",
+                  "volume": "80",
+                  "brandId": "0e43f0e4-ea51-4423-baeb-0244cc09757c",
+                  "categoryId": "7e5d7dcf-fd35-4602-b618-28c4a3988418"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "3f8b2af8-f276-4c0b-b782-88ec21bcc30f",
+                    "name": "Miojo",
+                    "volume": "80",
+                    "barCode": "7891079000228",
+                    "description": "Sabor Carne",
+                    "brandId": "0e43f0e4-ea51-4423-baeb-0244cc09757c",
+                    "categoryId": "7e5d7dcf-fd35-4602-b618-28c4a3988418",
+                    "measurementUnitId": "30a50f6d-f480-4e08-a6f3-ee12bfa0de19",
+                    "createdAt": "2023-02-01T15:19:41.813Z",
+                    "updatedAt": "2023-02-01T15:19:41.813Z"
+                  }
+                }
+              }
+            }
+          },
+          "400-brand": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "type": "brand.not.found",
+                    "field": "brandId",
+                    "message": "Esse marca não foi cadastrada."
+                  }
+                }
+              }
+            }
+          },
+          "400-category": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "type": "category.not.found",
+                    "field": "categoryId",
+                    "message": "Esse categoria não foi cadastrada."
+                  }
+                }
+              }
+            }
+          },
+          "400-product": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "type": "product.already.exists",
+                    "field": "barCode",
+                    "message": "Produto com esse código de barras já cadastrado."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "List products",
+        "description": "List all the products",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "3f8b2af8-f276-4c0b-b782-88ec21bcc30f",
+                      "name": "Miojo",
+                      "volume": "80",
+                      "barCode": "7891079000228",
+                      "description": "Sabor Carne",
+                      "brandId": "0e43f0e4-ea51-4423-baeb-0244cc09757c",
+                      "categoryId": "7e5d7dcf-fd35-4602-b618-28c4a3988418",
+                      "measurementUnitId": "30a50f6d-f480-4e08-a6f3-ee12bfa0de19",
+                      "createdAt": "2023-02-01T15:19:41.813Z",
+                      "updatedAt": "2023-02-01T15:19:41.813Z",
+                      "brand": {
+                        "id": "0e43f0e4-ea51-4423-baeb-0244cc09757c",
+                        "name": "Nissin",
+                        "createdAt": "2023-01-31T21:48:38.891Z"
+                      },
+                      "measurementUnit": {
+                        "id": "30a50f6d-f480-4e08-a6f3-ee12bfa0de19",
+                        "name": "gramas",
+                        "abbreviation": "g"
+                      },
+                      "category": {
+                        "id": "7e5d7dcf-fd35-4602-b618-28c4a3988418",
+                        "name": "Alimentos",
+                        "description": "Produtos para consumo",
+                        "createdAt": "2023-02-01T15:18:05.036Z"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

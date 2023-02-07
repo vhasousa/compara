@@ -12,14 +12,14 @@ describe("Create category", () => {
   })
 
   it("should be able to create a new category", async () => {
-    const createdBrand = await createCategoryUseCase.execute({
+    const createdCategory = await createCategoryUseCase.execute({
       name: "Category name",
       description: "Category description"
     });
 
-    expect(createdBrand.value).toHaveProperty("name");
-    expect(createdBrand.value.name).toEqual("Category name");
-    expect(createdBrand.value.description).toEqual("Category description");
+    expect(createdCategory.value).toHaveProperty("name");
+    expect(createdCategory.value.name).toEqual("Category name");
+    expect(createdCategory.value.description).toEqual("Category description");
   });
 
   it("should not be able to create a new category with a name that already exists", async () => {
@@ -28,13 +28,13 @@ describe("Create category", () => {
       description: "Category description"
     });
 
-    const createdBrand = await createCategoryUseCase.execute({
+    const createdCategory = await createCategoryUseCase.execute({
       name: "Category name",
       description: "Category description"
     });
 
-    expect(createdBrand.error.type).toEqual("category.already.exists");
-    expect(createdBrand.error.field).toEqual("name");
-    expect(createdBrand.isSuccess).toEqual(false);
+    expect(createdCategory.error.type).toEqual("category.already.exists");
+    expect(createdCategory.error.field).toEqual("name");
+    expect(createdCategory.isSuccess).toEqual(false);
   });
 });

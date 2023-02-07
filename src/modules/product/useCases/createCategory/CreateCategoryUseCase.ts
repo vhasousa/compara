@@ -2,7 +2,7 @@ import { Category } from "@prisma/client";
 
 import { IValidationMessage } from "@modules/product/interfaces/IValidationMessage";
 import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository";
-import { CreateCategoryValidation } from "./CreateBrandsValidation";
+import { CreateCategoryValidation } from "./CreateCategoryValidation";
 
 interface IRequest {
   name: string

@@ -31,6 +31,16 @@ class CategoriesRepository implements ICategoriesRepository {
 
     return category;
   }
+
+  async findById(id: string): Promise<Category> {
+    const category = await this.prisma.category.findUnique({
+      where: {
+        id
+      }
+    });
+
+    return category;
+  }
 }
 
 export { CategoriesRepository }

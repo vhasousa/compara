@@ -28,6 +28,12 @@ class BrandsRepositoryInMemory implements IBrandsRepository {
 
     return brand;
   }
+
+  async findById(id: string): Promise<Brand> {
+    const brand = this.brands.find(brand => brand.id === id);
+
+    return brand;
+  }
 }
 
 export { BrandsRepositoryInMemory }
