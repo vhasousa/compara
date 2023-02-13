@@ -4,16 +4,26 @@ interface ICreateProductDTO {
   id?: string
   name: string
   description: string
-  measurementUnitId?: string
+  measurementUnitId?: number
   measurementUnit?: MeasurementUnit
   barCode: string
   volume?: string
   brandId: string
-  categoryId: string
+  categoryId: number
   brand?: Brand
   category?: Category
   createdAt?: Date
   updatedAt?: Date
+}
+
+interface IImportProducts {
+  name: string
+  description: string
+  measurementUnitId?: number
+  categoryId?: number
+  barCode: string
+  volume?: string
+  brandId: string
 }
 
 interface IResponseProductDTO {
@@ -42,7 +52,8 @@ interface IProductsRepository {
     brand,
     category
   }: ICreateProductDTO): Promise<Product>;
+  createMany(products: IImportProducts[]): Promise<void>;
   findByBarCode(barCode: string): Promise<Product>;
 }
 
-export { IProductsRepository, ICreateProductDTO, IResponseProductDTO }
+export { IProductsRepository, ICreateProductDTO, IResponseProductDTO, IImportProducts }

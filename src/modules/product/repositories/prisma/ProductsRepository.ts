@@ -1,7 +1,7 @@
 import { measurementUnits } from "@config/prisma/seed/measurementUnitData";
 import { Product, PrismaClient } from "@prisma/client";
 
-import { ICreateProductDTO, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
+import { ICreateProductDTO, IImportProducts, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
 
 class ProductsRepository implements IProductsRepository {
   private prisma = new PrismaClient();
@@ -40,6 +40,15 @@ class ProductsRepository implements IProductsRepository {
     });
 
     return product;
+  }
+
+  async createMany(products: IImportProducts[]): Promise<void> {
+    const test = await this.prisma.product.createMany({
+      data: products,
+      skipDuplicates: true
+    });
+
+    console.log(test);
   }
 
   async findByBarCode(barCode: string): Promise<Product> {
