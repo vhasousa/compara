@@ -1,6 +1,6 @@
 import { Brand, Category, MeasurementUnit, Product } from "@prisma/client";
 import { v4 as uuidV4 } from 'uuid';
-import { ICreateProductDTO, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
+import { ICreateProductDTO, IImportProducts, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
 
 class ProductsRepositoryInMemory implements IProductsRepository {
   brands: Brand[] = [];
@@ -70,6 +70,10 @@ class ProductsRepositoryInMemory implements IProductsRepository {
     this.products.push(product);
 
     return product;
+  }
+
+  createMany(products: IImportProducts[]): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async findByBarCode(barCode: string): Promise<Product> {

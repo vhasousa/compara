@@ -9,8 +9,8 @@ import { CreateProductValidation } from "./CreateProductValidation"
 interface IRequest {
   name: string
   description: string
-  measurementUnitId?: string
-  categoryId?: string
+  measurementUnitId?: number
+  categoryId?: number
   barCode: string
   volume?: string
   brandId: string

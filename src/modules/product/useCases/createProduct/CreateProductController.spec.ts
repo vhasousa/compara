@@ -87,7 +87,7 @@ describe("Create products", () => {
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.body.id,
-      categoryId: uuidV4(),
+      categoryId: 5,
       description: "Product description", 
       measurementUnitId: measurementUnits.id, 
       volume: "80",

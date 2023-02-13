@@ -22,7 +22,7 @@ class MeasurementUnitsRepository implements IMeasurementUnitsRepository {
     return measurementUnits;
   }
 
-  async findById(id: string): Promise<MeasurementUnit> {
+  async findById(id: number): Promise<MeasurementUnit> {
     const measurementUnits = await this.prisma.measurementUnit.findUnique({
       where: {
         id

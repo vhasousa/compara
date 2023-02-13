@@ -9,7 +9,7 @@ interface ICreateMeasurementUnitDTO {
 interface IMeasurementUnitsRepository {
   create({ name, abbreviation }: ICreateMeasurementUnitDTO): Promise<MeasurementUnit>;
   list(): Promise<MeasurementUnit[]>;
-  findById(id: string): Promise<MeasurementUnit>;
+  findById(id: number): Promise<MeasurementUnit>;
 }
 
 export { IMeasurementUnitsRepository, ICreateMeasurementUnitDTO }
