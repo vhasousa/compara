@@ -38,6 +38,10 @@ interface IResponseProductDTO {
   updatedAt?: Date
 }
 
+interface IImportCategories {
+  name: string
+}
+
 interface IProductsRepository {
   list(): Promise<IResponseProductDTO[]>;
   create({
@@ -56,4 +60,10 @@ interface IProductsRepository {
   findByBarCode(barCode: string): Promise<Product>;
 }
 
-export { IProductsRepository, ICreateProductDTO, IResponseProductDTO, IImportProducts }
+export { 
+  IProductsRepository, 
+  ICreateProductDTO,
+  IResponseProductDTO, 
+  IImportProducts, 
+  IImportCategories 
+}

@@ -22,6 +22,26 @@ class CategoriesRepository implements ICategoriesRepository {
     return category;
   }
 
+  async createIfNotExists({ id, name, description }: ICreateCategoryDTO): Promise<Category> {
+    const category = await this.prisma.category.upsert({
+      where: { id: id || 0 },
+      update: {},
+      create: {
+        name,
+        description
+      }
+    });
+
+    return category;
+  }
+
+  async createMany(categories: ICreateCategoryDTO[]): Promise<void> {
+    await this.prisma.category.createMany({
+      data: categories,
+      skipDuplicates: true
+    });
+  }
+
   async findByName(name: string): Promise<Category> {
     const category = await this.prisma.category.findUnique({
       where: {
