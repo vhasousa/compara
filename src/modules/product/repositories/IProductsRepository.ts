@@ -38,10 +38,6 @@ interface IResponseProductDTO {
   updatedAt?: Date
 }
 
-interface IImportCategories {
-  name: string
-}
-
 interface IProductsRepository {
   list(): Promise<IResponseProductDTO[]>;
   create({
@@ -64,6 +60,5 @@ export {
   IProductsRepository, 
   ICreateProductDTO,
   IResponseProductDTO, 
-  IImportProducts, 
-  IImportCategories 
+  IImportProducts
 }

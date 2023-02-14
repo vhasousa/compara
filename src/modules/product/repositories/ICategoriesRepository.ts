@@ -6,6 +6,10 @@ interface ICreateCategoryDTO {
   description?: string
 }
 
+interface IImportCategories {
+  name: string
+}
+
 interface ICategoriesRepository {
   list(): Promise<Category[]>;
   create({ name, description }: ICreateCategoryDTO): Promise<Category>;
@@ -15,4 +19,4 @@ interface ICategoriesRepository {
   findById(id: number): Promise<Category>;
 }
 
-export { ICategoriesRepository, ICreateCategoryDTO }
+export { ICategoriesRepository, ICreateCategoryDTO, IImportCategories }

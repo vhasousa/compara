@@ -1,5 +1,4 @@
-import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository";
-import { IImportCategories, IImportProducts } from "@modules/product/repositories/IProductsRepository";
+import { ICategoriesRepository, IImportCategories } from "@modules/product/repositories/ICategoriesRepository";
 
 import fs from "fs";
 import { parse } from 'csv-parse';
