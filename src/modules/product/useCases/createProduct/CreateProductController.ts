@@ -16,7 +16,7 @@ class CreateProductController {
       barCode,
       volume,
       brandId,
-      categoryId
+      subCategoryId
     } = request.body; 
 
     const product = await this.createProductUseCase.execute({
@@ -26,7 +26,7 @@ class CreateProductController {
       barCode,
       volume,
       brandId,
-      categoryId
+      subCategoryId
     });
 
     if (!product.isSuccess) {

@@ -2,11 +2,12 @@ import { IValidationMessage } from "@modules/product/interfaces/IValidationMessa
 import { IBrandsRepository } from "@modules/product/repositories/IBrandsRepository";
 import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository";
 import { IMeasurementUnitsRepository } from "@modules/product/repositories/IMeasurementUnitsRepository";
-import { IImportProducts, IProductsRepository } from "@modules/product/repositories/IProductsRepository";
+import { ICreateProductDTO, IImportProducts, IProductsRepository } from "@modules/product/repositories/IProductsRepository";
 import { Product } from "@prisma/client";
 
 import fs from "fs";
 import { parse } from 'csv-parse';
+import { ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository";
 
 
 
@@ -15,16 +16,19 @@ class ImportProductsUseCase {
   private brandsRepository: IBrandsRepository;
   private measurementUnitsRepository: IMeasurementUnitsRepository;
   private categoriesRepository: ICategoriesRepository;
+  private subCategoriesRepository: ISubCategoriesRepository;
   
   constructor(
     productsRepository: IProductsRepository,
     // brandsRepository: IBrandsRepository,
     // categoriesRepository: ICategoriesRepository,
+    subCategoriesRepository: ISubCategoriesRepository,
     // measurementUnitsRepository: IMeasurementUnitsRepository
     ) {
     this.productsRepository = productsRepository;
     // this.brandsRepository = brandsRepository;
     // this.categoriesRepository = categoriesRepository;
+    this.subCategoriesRepository = subCategoriesRepository;
     // this.measurementUnitsRepository = measurementUnitsRepository;
   }
 
@@ -40,25 +44,26 @@ class ImportProductsUseCase {
       stream.pipe(parseFile);
 
       parseFile.on("data", async (line) => {
-        const [name,
+        const [
+          name,
           description,
           measurementUnitId,
           barCode,
           volume,
           brandId,
-          categoryId] = line;
-        
-        const parsedMeasurementUnitId = parseInt(measurementUnitId)
-        const parsedCategoryId = parseInt(categoryId)
+          categoryName,
+          subCategoryName
+        ] = line;
         
         products.push({
           name,
           description,
-          measurementUnitId: parsedMeasurementUnitId,
+          measurementUnitId,
           barCode,
           volume,
           brandId,
-          categoryId: parsedCategoryId
+          categoryName,
+          subCategoryName
         });
       })
       .on("end", () => {
@@ -72,11 +77,36 @@ class ImportProductsUseCase {
 
   async execute(file: Express.Multer.File): Promise<void> {
     const products = await this.loadProducts(file);
+    const listOfProducts: ICreateProductDTO[] = [];
 
-    await this.productsRepository.createMany(products);
+    for (let i = 0; i < products.length; i++) {
+      const { 
+        subCategoryName, 
+        barCode, 
+        description,
+        name,
+        brandId,
+        measurementUnitId,
+        volume 
+      } = products[i]
 
-    console.log(products);
+      const subCategory = await this.subCategoriesRepository.findByName(
+        subCategoryName
+      );
 
+      listOfProducts.push({ 
+        subCategoryId: subCategory.id, 
+        barCode, 
+        description,
+        name,
+        brandId: brandId ? brandId : null,
+        categoryId: subCategory.categoryId,
+        measurementUnitId: measurementUnitId ? measurementUnitId : null,
+        volume 
+      })
+    }
+
+    await this.productsRepository.createMany(listOfProducts);
   }
 }
 

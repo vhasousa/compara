@@ -1,10 +1,11 @@
-import { Brand, Category, MeasurementUnit, Product } from "@prisma/client";
+import { Brand, Category, MeasurementUnit, Product, SubCategory } from "@prisma/client";
 import { v4 as uuidV4 } from 'uuid';
 import { ICreateProductDTO, IImportProducts, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
 
 class ProductsRepositoryInMemory implements IProductsRepository {
   brands: Brand[] = [];
   categories: Category[] = [];
+  subCategories: SubCategory[] = [];
   measurementUnits: MeasurementUnit[] = [];
   products: Product[] = [];
 
@@ -46,11 +47,14 @@ class ProductsRepositoryInMemory implements IProductsRepository {
     volume,
     brandId,
     categoryId,
+    subCategoryId,
     brand,
-    category
+    category,
+    subCategory
   }: ICreateProductDTO): Promise<Product> {
     this.brands.push(brand);
     this.categories.push(category);
+    this.subCategories.push(subCategory);
     this.measurementUnits.push(measurementUnit);
 
     const product: Product = { 
@@ -62,6 +66,7 @@ class ProductsRepositoryInMemory implements IProductsRepository {
       volume,
       brandId,
       categoryId,
+      subCategoryId,
       createdAt: new Date(),
       updatedAt: new Date()
     }

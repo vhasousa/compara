@@ -9,13 +9,17 @@ import { CreateCategoryUseCase } from '../createCategory/CreateCategoryUseCase';
 import { CategoriesRepositoryInMemory } from '@modules/product/repositories/inMemory/CategoriesRepositoryInMemory';
 import { MeasurementUnit } from '@prisma/client';
 import { MeasurementUnitsRepositoryInMemory } from '@modules/product/repositories/inMemory/MeasurementUnitRepositoryInMemory';
+import { CreateSubCategoryUseCase } from '../createSubCategory/CreateSubCategoryUseCase';
+import { SubCategoriesRepositoryInMemory } from '@modules/product/repositories/inMemory/SubCategoriesRepositoryInMemory';
 
 let createBrandUseCase: CreateBrandsUseCase;
 let createProductUseCase: CreateProductUseCase;
 let createCategoryUseCase: CreateCategoryUseCase;
+let createSubCategoryUseCase: CreateSubCategoryUseCase;
 let productsRepositoryInMemory: ProductsRepositoryInMemory;
 let brandsRepositoryInMemory: BrandsRepositoryInMemory;
 let categoriesRepositoryInMemory: CategoriesRepositoryInMemory;
+let subCategoriesRepositoryInMemory: SubCategoriesRepositoryInMemory;
 let measurementUnitsRepositoryInMemory: MeasurementUnitsRepositoryInMemory;
 
 describe("Create product", () => {
@@ -24,14 +28,20 @@ describe("Create product", () => {
     brandsRepositoryInMemory = new BrandsRepositoryInMemory();
     productsRepositoryInMemory = new ProductsRepositoryInMemory();
     categoriesRepositoryInMemory = new CategoriesRepositoryInMemory();
+    subCategoriesRepositoryInMemory = new SubCategoriesRepositoryInMemory();
     measurementUnitsRepositoryInMemory = new MeasurementUnitsRepositoryInMemory();
     createCategoryUseCase = new CreateCategoryUseCase(categoriesRepositoryInMemory);
+    createSubCategoryUseCase = new CreateSubCategoryUseCase(
+      subCategoriesRepositoryInMemory, 
+      categoriesRepositoryInMemory
+      );
     createBrandUseCase = new CreateBrandsUseCase(brandsRepositoryInMemory);
     createBrandUseCase = new CreateBrandsUseCase(brandsRepositoryInMemory);
     createProductUseCase = new CreateProductUseCase(
       productsRepositoryInMemory, 
       brandsRepositoryInMemory,
       categoriesRepositoryInMemory,
+      subCategoriesRepositoryInMemory,
       measurementUnitsRepositoryInMemory
       );
   })
@@ -46,17 +56,24 @@ describe("Create product", () => {
       description: "Category description"
     });
 
+    const createdSubCategory = await createSubCategoryUseCase.execute({
+      name: "Sub Category",
+      description: "Sub Category description",
+      categoryName: createdCategory.value.name
+    });
+    
     const measurementUnit: MeasurementUnit = {
       id: uuidV4(),
       name: 'gramas',
       abbreviation: 'g'
     }    
 
-    const product: ICreateProductDTO = { 
+    const product = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.value.id,
       categoryId: createdCategory.value.id,
+      subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
       measurementUnitId: measurementUnit.id, 
       volume: "80",
@@ -69,6 +86,7 @@ describe("Create product", () => {
     expect(createdProducts.value.barCode).toEqual("1111111111111");
     expect(createdProducts.value.brandId).toEqual(createdBrand.value.id);
     expect(createdProducts.value.categoryId).toEqual(createdCategory.value.id);
+    expect(createdProducts.value.subCategoryId).toEqual(createdSubCategory.value.id);
     expect(createdProducts.value.description).toEqual("Product description");
     expect(createdProducts.value.measurementUnitId).toEqual(measurementUnit.id);
     expect(createdProducts.value.volume).toEqual("80");
@@ -80,17 +98,24 @@ describe("Create product", () => {
       description: "Category description"
     });
 
+    const createdSubCategory = await createSubCategoryUseCase.execute({
+      name: "Sub Category",
+      description: "Sub Category description",
+      categoryName: createdCategory.value.name
+    });
+
     const measurementUnit: MeasurementUnit = {
       id: uuidV4(),
       name: 'gramas',
       abbreviation: 'g'
     }    
 
-    const product: ICreateProductDTO = { 
+    const product = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: uuidV4(),
       categoryId: createdCategory.value.id,
+      subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
       measurementUnitId: measurementUnit.id, 
       volume: "80",
@@ -114,11 +139,11 @@ describe("Create product", () => {
       abbreviation: 'g'
     }    
 
-    const product: ICreateProductDTO = { 
+    const product = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.value.id,
-      categoryId: uuidV4(),
+      subCategoryId: 100,
       description: "Product description", 
       measurementUnitId: measurementUnit.id, 
       volume: "80",
@@ -127,8 +152,8 @@ describe("Create product", () => {
     const createdProducts = await createProductUseCase.execute(product)
 
     expect(createdProducts.isSuccess).toEqual(false);
-    expect(createdProducts.error.type).toEqual("category.not.found");
-    expect(createdProducts.error.field).toEqual("categoryId");
+    expect(createdProducts.error.type).toEqual("subCategory.not.found");
+    expect(createdProducts.error.field).toEqual("subCategoryId");
   });
   
 
@@ -142,27 +167,35 @@ describe("Create product", () => {
       description: "Category description"
     });
 
+    const createdSubCategory = await createSubCategoryUseCase.execute({
+      name: "Sub Category",
+      description: "Sub Category description",
+      categoryName: createdCategory.value.name
+    });
+
     const measurementUnit: MeasurementUnit = {
       id: uuidV4(),
       name: 'gramas',
       abbreviation: 'g'
     }
 
-    const product: ICreateProductDTO = { 
+    const product = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.value.id,
       categoryId: createdCategory.value.id,
+      subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
       measurementUnitId: measurementUnit.id, 
       volume: "80",
     }
 
-    const product2: ICreateProductDTO = { 
+    const product2 = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.value.id,
       categoryId: createdCategory.value.id,
+      subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
       measurementUnitId: measurementUnit.id, 
       volume: "80",

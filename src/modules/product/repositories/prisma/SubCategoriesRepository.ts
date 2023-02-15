@@ -49,6 +49,7 @@ class SubCategoriesRepository implements ISubCategoriesRepository {
       }
     });
 
+
     return subCategory;
   }
 

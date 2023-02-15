@@ -25,7 +25,8 @@ class ProductsRepository implements IProductsRepository {
     barCode,
     volume,
     brandId,
-    categoryId
+    categoryId,
+    subCategoryId
   }: ICreateProductDTO): Promise<Product> {
     const product = await this.prisma.product.create({
       data: {
@@ -35,20 +36,21 @@ class ProductsRepository implements IProductsRepository {
         barCode,
         volume,
         brandId,
-        categoryId
+        categoryId,
+        subCategoryId
       }
     });
 
     return product;
   }
 
-  async createMany(products: IImportProducts[]): Promise<void> {
+  async createMany(products: ICreateProductDTO[]): Promise<void> {
     const test = await this.prisma.product.createMany({
       data: products,
       skipDuplicates: true
     });
 
-    console.log(test);
+    // console.log(test);
   }
 
   async findByBarCode(barCode: string): Promise<Product> {

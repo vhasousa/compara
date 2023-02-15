@@ -10,31 +10,41 @@ import { ListProductsUseCase } from "./ListProductsUseCase";
 import { MeasurementUnitsRepositoryInMemory } from "@modules/product/repositories/inMemory/MeasurementUnitRepositoryInMemory";
 import { CreateMeasurementUnitUseCase } from "../createMeasurementUnit/CreateMeasurementUnitUseCase";
 import { CreateProductUseCase } from "../createProduct/CreateProductUseCase";
+import { SubCategoriesRepositoryInMemory } from "@modules/product/repositories/inMemory/SubCategoriesRepositoryInMemory";
+import { CreateSubCategoryUseCase } from "../createSubCategory/CreateSubCategoryUseCase";
 
 let createBrandUseCase: CreateBrandsUseCase;
 let createProductUseCase: CreateProductUseCase;
 let createCategoryUseCase: CreateCategoryUseCase;
+let createSubCategoryUseCase: CreateSubCategoryUseCase;
 let createMeasurementUnitUseCase: CreateMeasurementUnitUseCase;
 let listProductsUseCase: ListProductsUseCase;
 let productsRepositoryInMemory: ProductsRepositoryInMemory;
 let brandsRepositoryInMemory: BrandsRepositoryInMemory;
 let categoriesRepositoryInMemory: CategoriesRepositoryInMemory;
+let subCategoriesRepositoryInMemory: SubCategoriesRepositoryInMemory;
 let measurementUnitsRepositoryInMemory: MeasurementUnitsRepositoryInMemory;
 
-describe("List brand", () => {
+describe("List products", () => {
   
   beforeEach(() => {
     brandsRepositoryInMemory = new BrandsRepositoryInMemory();
     productsRepositoryInMemory = new ProductsRepositoryInMemory();
     categoriesRepositoryInMemory = new CategoriesRepositoryInMemory();
+    subCategoriesRepositoryInMemory = new SubCategoriesRepositoryInMemory();
     measurementUnitsRepositoryInMemory = new MeasurementUnitsRepositoryInMemory();
     createBrandUseCase = new CreateBrandsUseCase(brandsRepositoryInMemory);
     createCategoryUseCase = new CreateCategoryUseCase(categoriesRepositoryInMemory);
+    createSubCategoryUseCase = new CreateSubCategoryUseCase(
+      subCategoriesRepositoryInMemory, 
+      categoriesRepositoryInMemory
+      );
     createMeasurementUnitUseCase = new CreateMeasurementUnitUseCase(measurementUnitsRepositoryInMemory);
     createProductUseCase = new CreateProductUseCase(
       productsRepositoryInMemory, 
       brandsRepositoryInMemory, 
       categoriesRepositoryInMemory, 
+      subCategoriesRepositoryInMemory, 
       measurementUnitsRepositoryInMemory);
     listProductsUseCase = new ListProductsUseCase(productsRepositoryInMemory);
   })
@@ -49,25 +59,34 @@ describe("List brand", () => {
       description: "Category description"
     });
 
-    const createdMeasurementUnit = await createMeasurementUnitUseCase.execute({
+    const createdSubCategory = await createSubCategoryUseCase.execute({
+      name: "Sub Category",
+      description: "Sub Category description",
+      categoryName: createdCategory.value.name
+    });
+    
+    const measurementUnit: MeasurementUnit = {
+      id: uuidV4(),
       name: 'gramas',
       abbreviation: 'g'
-    })
+    }
 
-    const product: ICreateProductDTO = { 
+    const createdMeasurementUnit = await createMeasurementUnitUseCase.execute(
+      measurementUnit
+    )
+
+    const product = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.value.id,
       categoryId: createdCategory.value.id,
+      subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
       measurementUnitId: createdMeasurementUnit.id, 
       volume: "80",
-      brand: createdBrand.value,
-      category: createdCategory.value,
-      measurementUnit: createdMeasurementUnit
     }
 
-    await createProductUseCase.execute(product);
+    await createProductUseCase.execute(product)
 
     const listOfProducts = await listProductsUseCase.execute();
 
