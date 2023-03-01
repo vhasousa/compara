@@ -1,27 +1,35 @@
+import slugify from "slugify";
+
 import { Category, SubCategory } from "@prisma/client";
 
 import { ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository";
 import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository";
 import { CreateSubCategoryValidation } from "./CreateSubCategoryValidation";
 import { IValidationMessage } from "@modules/product/interfaces/IValidationMessage";
+import { IImagesRepository } from "@modules/product/repositories/IImagesRepository";
 
 interface IRequest {
   name: string
   description?: string
   categoryName: string
+  originalName: string
+  key: string
 }
 
 class CreateSubCategoryUseCase {
   private subCategoriesRepository: ISubCategoriesRepository;
   private categoriesRepository: ICategoriesRepository;
+  private imagesRepository: IImagesRepository;
   private createSubCategoryValidation: CreateSubCategoryValidation;
   
   constructor(
     subCategoriesRepository: ISubCategoriesRepository,
     categoriesRepository: ICategoriesRepository,
+    imagesRepository: IImagesRepository
     ) {
     this.subCategoriesRepository = subCategoriesRepository;
     this.categoriesRepository = categoriesRepository;
+    this.imagesRepository = imagesRepository;
     this.createSubCategoryValidation = new CreateSubCategoryValidation();
   }
 
@@ -29,6 +37,8 @@ class CreateSubCategoryUseCase {
     name, 
     description,
     categoryName,
+    originalName,
+    key
   }: IRequest): Promise<IValidationMessage<Category>> {
     const category = await this.categoriesRepository.findByName(categoryName);
 
@@ -40,11 +50,21 @@ class CreateSubCategoryUseCase {
       }
     }
 
+    const image = await this.imagesRepository.create({ originalName, key })
+
+    const slug = slugify(name, {
+      replacement: '-',
+      lower: true,
+      remove: /[*+~.()'"!:@<>-?,]/g,
+    });
+
     const createdSubcategory = await this.subCategoriesRepository.create({ 
       name, 
       description, 
       categoryId: category.id,
-      category
+      category,
+      imageId: image.id,
+      slug
     });
 
     const result: IValidationMessage<Category> = {

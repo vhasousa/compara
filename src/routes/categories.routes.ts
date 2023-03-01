@@ -5,13 +5,13 @@ import { Router } from "express";
 
 import multer from 'multer';
 
+import uploadConfig from '@config/upload'
+
 const categoriesRoutes = Router();
 
-const upload = multer({
-  dest: './tmp',
-});
+const upload = multer(uploadConfig);
 
-categoriesRoutes.post('/', (request, response) => {
+categoriesRoutes.post('/', upload.single('image'), (request, response) => {
     return createCategoryController.handle(request, response);
   }
 )

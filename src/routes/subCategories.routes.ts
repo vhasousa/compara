@@ -6,13 +6,13 @@ import { listSubCategoriesController } from "@modules/product/useCases/listSubCa
 import { importSubCategoriesController } from "@modules/product/useCases/importSubCategories";
 import { listSubCategoriesByCategoryController } from "@modules/product/useCases/listSubCategoriesByCategory";
 
+import uploadConfig from '@config/upload'
+
 const subCategoriesRoutes = Router();
 
-const upload = multer({
-  dest: './tmp',
-});
+const upload = multer(uploadConfig);
 
-subCategoriesRoutes.post('/', (request, response) => {
+subCategoriesRoutes.post('/', upload.single('image'), (request, response) => {
   return createSubCategoryController.handle(request, response);
 })
 
@@ -20,7 +20,7 @@ subCategoriesRoutes.get('/', (request, response) => {
   return listSubCategoriesController.handle(request, response);
 })
 
-subCategoriesRoutes.get('/:categoryName', (request, response) => {
+subCategoriesRoutes.get('/:categorySlug', (request, response) => {
   return listSubCategoriesByCategoryController.handle(request, response);
 })
 

@@ -1,9 +1,9 @@
-import { Category } from "@prisma/client";
+import { Category, Image } from "@prisma/client";
 import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRepository";
 
 class CategoriesRepositoryInMemory implements ICategoriesRepository {
-  
   categories: Category[] = [];
+  images: Image[] = [];
   counter = 0;
 
   async list(): Promise<Category[]> {
@@ -12,14 +12,25 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
     return listOfBrands;
   }
 
-  async create({ name, description }: ICreateCategoryDTO): Promise<Category> {
+  async create({ 
+    name,
+    description,
+    slug,
+    image,
+    imageId
+  }: ICreateCategoryDTO): Promise<Category> {
     ++this.counter
+
+    this.images.push(image);
 
     const category: Category = {
       id: this.counter,
       name,
       description,
-      createdAt: new Date()
+      slug,
+      createdAt: new Date(),
+      image,
+      imageId
     }
 
     this.categories.push(category);
@@ -45,6 +56,10 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
     const brand = this.categories.find(brand => brand.id === id);
 
     return brand;
+  }
+
+  findBySlug(slug: string): Promise<Category> {
+    throw new Error("Method not implemented.");
   }
 }
 

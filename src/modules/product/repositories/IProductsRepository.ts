@@ -16,6 +16,7 @@ interface ICreateProductDTO {
   category?: Category
   createdAt?: Date
   updatedAt?: Date
+  imageId: string
 }
 
 interface IImportProducts {
@@ -30,19 +31,21 @@ interface IImportProducts {
 }
 
 interface IResponseProductDTO {
+  id: string
   name: string
   description: string
   measurementUnit?: MeasurementUnit
-  barCode: string
+  barCode?: string
   volume?: string
-  brand: Brand
-  category: Category
+  brand?: Brand
+  category?: Category
   createdAt?: Date
   updatedAt?: Date
+  imageUrl: string
 }
 
 interface IProductsRepository {
-  list(): Promise<IResponseProductDTO[]>;
+  list(): Promise<Product[]>;
   create({
     name,
     description,
@@ -53,10 +56,12 @@ interface IProductsRepository {
     brandId,
     subCategoryId,
     brand,
-    subCategory
+    subCategory,
+    imageId
   }: ICreateProductDTO): Promise<Product>;
   createMany(products: ICreateProductDTO[]): Promise<void>;
   findByBarCode(barCode: string): Promise<Product>;
+  listBySubCategory(subCategoryId: number): Promise<Product[]>;
 }
 
 export { 

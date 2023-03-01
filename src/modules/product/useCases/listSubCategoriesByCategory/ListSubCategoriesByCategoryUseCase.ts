@@ -1,9 +1,9 @@
 import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository";
-import { ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository";
+import { IResponseSubCategoryDTO, ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository";
 import { SubCategory } from "@prisma/client";
 
 interface IRequest {
-  categoryName: string
+  categorySlug: string
 }
 
 class ListSubCategoriesByCategoryUseCase {
@@ -18,12 +18,28 @@ class ListSubCategoriesByCategoryUseCase {
     this.categoriesRepository = categoriesRepository;
   }
 
-  async execute({ categoryName }: IRequest): Promise<SubCategory[]> {
-    const category = await this.categoriesRepository.findByName(categoryName);
+  async execute({ categorySlug }: IRequest): Promise<IResponseSubCategoryDTO[]> {
+    const category = await this.categoriesRepository.findBySlug(categorySlug);
 
     const subCategories = await this.subCategoriesRepository.listByCategory(category.id);
 
-    return subCategories;
+    const subCategoriesMapped = subCategories.map(subCategory => {
+      const { id, name, description, image, slug } = subCategory
+
+      const imageUrl = `${process.env.APP_HOST}/${image.key}`
+
+      const subCategoriesMapped: IResponseSubCategoryDTO = { 
+        id,
+        name,
+        description,
+        imageUrl,
+        slug
+      }
+
+      return subCategoriesMapped
+    })
+
+    return subCategoriesMapped;
   }
 }
 

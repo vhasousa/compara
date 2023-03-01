@@ -1,10 +1,12 @@
-import { Category, SubCategory } from '@prisma/client';
+import { Category, Image, SubCategory } from '@prisma/client';
 
 interface ICreateSubCategoryDTO {
   name: string
   description?: string
   categoryId: number
   category?: Category
+  imageId: string
+  slug: string
 }
 
 interface IResponseSubCategoryDTO {
@@ -13,7 +15,9 @@ interface IResponseSubCategoryDTO {
   description: string
   categoryId?: number
   createdAt?: Date
-  category: Category
+  category?: Category
+  imageUrl: string
+  slug: string
 }
 
 interface IImportSubCategories {
@@ -22,16 +26,19 @@ interface IImportSubCategories {
 }
 
 interface ISubCategoriesRepository {
-  list(): Promise<IResponseSubCategoryDTO[]>;
+  list(): Promise<SubCategory[]>;
   create({ 
     name, 
     description, 
     categoryId, 
-    category 
+    category,
+    imageId,
+    slug
   }: ICreateSubCategoryDTO): Promise<SubCategory>;
   createMany(subCategories: ICreateSubCategoryDTO[]): Promise<void>;
   findByName(name: string): Promise<SubCategory>;
   findById(id: number): Promise<SubCategory>;
+  findBySlug(slug: string): Promise<SubCategory>;
   listByCategory(categoryId: number): Promise<SubCategory[]>;
 }
 

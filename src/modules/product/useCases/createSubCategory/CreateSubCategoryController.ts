@@ -9,12 +9,16 @@ class CreateSubCategoryController {
   }
 
   async handle(request: Request, response: Response): Promise<Response> {
-    const { name, description, categoryName } = request.body; 
+    const { name, description, categoryName } = request.body;
+
+    const { originalname, filename } = request.file;
 
     const subCategory = await this.createSubCategoryUseCase.execute({ 
       name, 
       description,
-      categoryName
+      categoryName,
+      originalName: originalname,
+      key: filename
     });
 
     if (!subCategory.isSuccess) {

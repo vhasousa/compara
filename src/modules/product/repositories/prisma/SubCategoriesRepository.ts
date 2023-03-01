@@ -9,7 +9,7 @@ import {
 class SubCategoriesRepository implements ISubCategoriesRepository {
   private prisma = new PrismaClient();
 
-  async list(): Promise<IResponseSubCategoryDTO[]> {
+  async list(): Promise<SubCategory[]> {
     const subCategories = await this.prisma.subCategory.findMany({
       include: {
         category: true
@@ -22,13 +22,17 @@ class SubCategoriesRepository implements ISubCategoriesRepository {
   async create({ 
     name, 
     description, 
-    categoryId 
+    categoryId,
+    imageId,
+    slug
   }: ICreateSubCategoryDTO): Promise<SubCategory> {
     const subCategories = await this.prisma.subCategory.create({
       data: {
         name,
         description,
-        categoryId
+        categoryId,
+        imageId,
+        slug
       }
     });
 
@@ -63,9 +67,22 @@ class SubCategoriesRepository implements ISubCategoriesRepository {
     return subCategory;
   }
 
+  async findBySlug(slug: string): Promise<SubCategory> {
+    const subCategory = await this.prisma.subCategory.findUnique({
+      where: {
+        slug
+      }
+    });
+
+    return subCategory;
+  }
+
   async listByCategory(categoryId: number): Promise<SubCategory[]> {
     const subCategories = await this.prisma.subCategory.findMany({
-      where: { categoryId }
+      where: { categoryId },
+      include: {
+        image: true
+      }
     });
 
     return subCategories;

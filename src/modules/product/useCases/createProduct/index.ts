@@ -1,5 +1,6 @@
 import { BrandsRepository } from "@modules/product/repositories/prisma/BrandsRepository";
 import { CategoriesRepository } from "@modules/product/repositories/prisma/CategoriesRepository";
+import { ImagesRepository } from "@modules/product/repositories/prisma/ImagesRepository";
 import { MeasurementUnitsRepository } from "@modules/product/repositories/prisma/MeasurementUnitsRepository";
 import { ProductsRepository } from "@modules/product/repositories/prisma/ProductsRepository";
 import { SubCategoriesRepository } from "@modules/product/repositories/prisma/SubCategoriesRepository";
@@ -11,13 +12,15 @@ const brandsRepository = new BrandsRepository();
 const measurementUnitsRepository = new MeasurementUnitsRepository();
 const categoriesRepository = new CategoriesRepository();
 const subCategoriesRepository = new SubCategoriesRepository();
+const imagesRepository = new ImagesRepository();
 
 const createProductUseCase = new CreateProductUseCase(
   productsRepository, 
   brandsRepository, 
   categoriesRepository, 
   subCategoriesRepository, 
-  measurementUnitsRepository
+  measurementUnitsRepository,
+  imagesRepository
   );
 const createProductController = new CreateProductController(createProductUseCase);
 

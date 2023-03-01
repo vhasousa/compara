@@ -6,29 +6,36 @@ class CategoriesRepository implements ICategoriesRepository {
   private prisma = new PrismaClient();
 
   async list(): Promise<Category[]> {
-    const categories = await this.prisma.category.findMany();
+    const categories = await this.prisma.category.findMany({
+      include: {
+        image: true
+      }
+    });
 
     return categories;
   }
 
-  async create({ name, description }: ICreateCategoryDTO): Promise<Category> {
+  async create({ name, description, imageId, slug }: ICreateCategoryDTO): Promise<Category> {
     const category = await this.prisma.category.create({
       data: {
         name,
-        description        
+        description,
+        imageId,
+        slug
       }
     });
 
     return category;
   }
 
-  async createIfNotExists({ id, name, description }: ICreateCategoryDTO): Promise<Category> {
+  async createIfNotExists({ id, name, description, slug }: ICreateCategoryDTO): Promise<Category> {
     const category = await this.prisma.category.upsert({
       where: { id: id || 0 },
       update: {},
       create: {
         name,
-        description
+        description,
+        slug
       }
     });
 
@@ -46,6 +53,16 @@ class CategoriesRepository implements ICategoriesRepository {
     const category = await this.prisma.category.findUnique({
       where: {
         name
+      }
+    });
+
+    return category;
+  }
+
+  async findBySlug(slug: string): Promise<Category> {
+    const category = await this.prisma.category.findUnique({
+      where: {
+        slug
       }
     });
 

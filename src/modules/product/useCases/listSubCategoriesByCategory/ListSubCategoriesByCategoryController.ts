@@ -9,10 +9,10 @@ class ListSubCategoriesByCategoryController {
   }
 
   async handle(request: Request, response: Response): Promise<Response> {
-    const { categoryName } = request.params
+    const { categorySlug } = request.params
 
     const subCategories = await this.listSubCategoriesByCategoryUseCase.execute({
-      categoryName
+      categorySlug
     });
 
     return response.status(200).json(subCategories);

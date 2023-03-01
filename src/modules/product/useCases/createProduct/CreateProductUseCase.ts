@@ -1,6 +1,7 @@
 import { IValidationMessage } from "@modules/product/interfaces/IValidationMessage"
 import { IBrandsRepository } from "@modules/product/repositories/IBrandsRepository"
 import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository"
+import { IImagesRepository } from "@modules/product/repositories/IImagesRepository"
 import { IMeasurementUnitsRepository } from "@modules/product/repositories/IMeasurementUnitsRepository"
 import { IProductsRepository } from "@modules/product/repositories/IProductsRepository"
 import { ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository"
@@ -9,13 +10,15 @@ import { CreateProductValidation } from "./CreateProductValidation"
 
 interface IRequest {
   name: string
-  description: string
-  measurementUnitId?: number
+  description?: string
+  measurementUnitId?: string
   categoryId?: number
-  subCategoryId?: number
+  subCategoryId?: string
   barCode: string
   volume?: string
   brandId: string
+  originalName: string
+  key: string
 }
 
 class CreateProductUseCase {
@@ -24,6 +27,7 @@ class CreateProductUseCase {
   private measurementUnitsRepository: IMeasurementUnitsRepository;
   private categoriesRepository: ICategoriesRepository;
   private subCategoriesRepository: ISubCategoriesRepository;
+  private imagesRepository: IImagesRepository;
   private createProductsValidation: CreateProductValidation;
   
   constructor(
@@ -31,13 +35,15 @@ class CreateProductUseCase {
     brandsRepository: IBrandsRepository,
     categoriesRepository: ICategoriesRepository,
     subCategoriesRepository: ISubCategoriesRepository,
-    measurementUnitsRepository: IMeasurementUnitsRepository
+    measurementUnitsRepository: IMeasurementUnitsRepository,
+    imagesRepository: IImagesRepository
     ) {
     this.productsRepository = productsRepository;
     this.brandsRepository = brandsRepository;
     this.categoriesRepository = categoriesRepository;
     this.subCategoriesRepository = subCategoriesRepository;
     this.measurementUnitsRepository = measurementUnitsRepository;
+    this.imagesRepository = imagesRepository;
     this.createProductsValidation = new CreateProductValidation();
   }
 
@@ -48,16 +54,21 @@ class CreateProductUseCase {
     barCode,
     volume,
     brandId,
-    subCategoryId
+    subCategoryId,
+    originalName,
+    key
   }: IRequest): Promise<IValidationMessage<Product>> {
     const brand = await this.brandsRepository.findById(brandId);
-    const subCategory = await this.subCategoriesRepository.findById(subCategoryId);
-    const measurementUnit = await this.measurementUnitsRepository.findById(measurementUnitId);
+    const subCategory = await this.subCategoriesRepository.findById(
+      parseInt(subCategoryId));
+    const measurementUnit = await this.measurementUnitsRepository.findById(
+      parseInt(measurementUnitId));
     const product = await this.productsRepository.findByBarCode(barCode);
-    
+
     if (!brand || product || !subCategory) {
       const brandExists = this.createProductsValidation.brandExists(brand);
-      const subCategoryExists = this.createProductsValidation.subCategoryExists(subCategory);
+      const subCategoryExists = this.createProductsValidation.subCategoryExists(
+        subCategory);
       
       if (!brandExists.isSuccess) {
         return brandExists;
@@ -76,19 +87,22 @@ class CreateProductUseCase {
     
     const category = await this.categoriesRepository.findById(subCategory.categoryId);
 
+    const image = await this.imagesRepository.create({ originalName, key })
+
     const createdProduct = await this.productsRepository.create({
       name,
       description,
-      measurementUnitId,
+      measurementUnitId: measurementUnit.id,
       measurementUnit,
       barCode,
       volume,
       brandId,
       categoryId: category.id,
-      subCategoryId,
+      subCategoryId: subCategory.id,
       brand,
       category,
-      subCategory
+      subCategory,
+      imageId: image.id
     });
 
     const result: IValidationMessage<Product> = {

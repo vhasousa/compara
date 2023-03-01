@@ -6,19 +6,24 @@ import { createProductController } from "@modules/product/useCases/createProduct
 import { listProductsController } from "@modules/product/useCases/listProducts";
 import { importProductsController } from "@modules/product/useCases/importProducts";
 
+import uploadConfig from '@config/upload'
+import { ListProductsBySubCategoryController } from "@modules/product/useCases/listProductsBySubCategory/ListProductsBySubCategoryController";
+import { listProductsBySubCategoryController } from "@modules/product/useCases/listProductsBySubCategory";
 
 const productsRoutes = Router();
 
-const upload = multer({
-  dest: './tmp',
-});
+const upload = multer(uploadConfig);
 
-productsRoutes.post('/', (request, response) => {
+productsRoutes.post('/', upload.single('image'), (request, response) => {
   return createProductController.handle(request, response);
 });
 
 productsRoutes.get('/', (request, response) => {
   return listProductsController.handle(request, response);
+});
+
+productsRoutes.get('/:subCategorySlug', (request, response) => {
+  return listProductsBySubCategoryController.handle(request, response);
 });
 
 productsRoutes.post('/import', upload.single("file"), (request, response) => {
