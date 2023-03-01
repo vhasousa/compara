@@ -62,6 +62,14 @@ class SubCategoriesRepository implements ISubCategoriesRepository {
 
     return subCategory;
   }
+
+  async listByCategory(categoryId: number): Promise<SubCategory[]> {
+    const subCategories = await this.prisma.subCategory.findMany({
+      where: { categoryId }
+    });
+
+    return subCategories;
+  }
 }
 
 export { SubCategoriesRepository }

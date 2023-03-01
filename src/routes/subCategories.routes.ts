@@ -4,6 +4,7 @@ import multer from "multer";
 import { createSubCategoryController } from "@modules/product/useCases/createSubCategory";
 import { listSubCategoriesController } from "@modules/product/useCases/listSubCategories";
 import { importSubCategoriesController } from "@modules/product/useCases/importSubCategories";
+import { listSubCategoriesByCategoryController } from "@modules/product/useCases/listSubCategoriesByCategory";
 
 const subCategoriesRoutes = Router();
 
@@ -17,6 +18,10 @@ subCategoriesRoutes.post('/', (request, response) => {
 
 subCategoriesRoutes.get('/', (request, response) => {
   return listSubCategoriesController.handle(request, response);
+})
+
+subCategoriesRoutes.get('/:categoryName', (request, response) => {
+  return listSubCategoriesByCategoryController.handle(request, response);
 })
 
 subCategoriesRoutes.post('/import', upload.single("file"), (request, response) => {

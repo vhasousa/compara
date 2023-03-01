@@ -32,6 +32,7 @@ interface ISubCategoriesRepository {
   createMany(subCategories: ICreateSubCategoryDTO[]): Promise<void>;
   findByName(name: string): Promise<SubCategory>;
   findById(id: number): Promise<SubCategory>;
+  listByCategory(categoryId: number): Promise<SubCategory[]>;
 }
 
 export { 
