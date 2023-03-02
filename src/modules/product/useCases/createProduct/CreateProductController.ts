@@ -16,17 +16,21 @@ class CreateProductController {
       barCode,
       volume,
       brandId,
-      categoryId
-    } = request.body; 
+      subCategoryId
+    } = request.body;
+
+    const { originalname, filename } = request.file;
 
     const product = await this.createProductUseCase.execute({
       name,
       description,
-      measurementUnitId,
+      measurementUnitId: parseInt(measurementUnitId),
       barCode,
       volume,
       brandId,
-      categoryId
+      subCategoryId: parseInt(subCategoryId),
+      originalName: originalname,
+      key: filename
     });
 
     if (!product.isSuccess) {

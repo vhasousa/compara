@@ -1,4 +1,4 @@
-import { Brand, Category, Product } from "@prisma/client";
+import { Brand, Category, Product, SubCategory } from "@prisma/client";
 import { IValidationMessage } from "@modules/product/interfaces/IValidationMessage";
 
 class CreateProductValidation {
@@ -31,6 +31,27 @@ class CreateProductValidation {
           type: 'category.not.found',
           field: 'categoryId',
           message: 'Esse categoria não foi cadastrada.'
+        },
+      }
+
+      return message;
+    }
+
+    const message = {
+      isSuccess: true
+    }
+
+    return message
+  }
+
+  subCategoryExists(subCategory: SubCategory): IValidationMessage<Product> {
+    if (!subCategory) {
+      const message = {
+        isSuccess: false,
+        error: {
+          type: 'subCategory.not.found',
+          field: 'subCategoryId',
+          message: 'Esse sub categoria não foi cadastrada.'
         },
       }
 

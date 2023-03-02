@@ -1,3 +1,4 @@
+import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
 import { Category, PrismaClient } from "@prisma/client";
 import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRepository";
 
@@ -5,21 +6,48 @@ import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesReposit
 class CategoriesRepository implements ICategoriesRepository {
   private prisma = new PrismaClient();
 
-  async list(): Promise<Category[]> {
-    const categories = await this.prisma.category.findMany();
+  async list(): Promise<ICategoryDTO[]> {
+    const categories = await this.prisma.category.findMany({
+      include: {
+        image: true
+      }
+    });
 
     return categories;
   }
 
-  async create({ name, description }: ICreateCategoryDTO): Promise<Category> {
+  async create({ name, description, imageId, slug }: ICreateCategoryDTO): Promise<Category> {
     const category = await this.prisma.category.create({
       data: {
         name,
-        description        
+        description,
+        imageId,
+        slug
       }
     });
 
     return category;
+  }
+
+  async createIfNotExists({ id, name, description, slug }: ICreateCategoryDTO): Promise<Category> {
+    const category = await this.prisma.category.upsert({
+      where: { id: id || 0 },
+      update: {},
+      create: {
+        name,
+        description,
+        slug
+      }
+    });
+
+    return category;
+  }
+
+  async createMany(categories: ICreateCategoryDTO[]): Promise<void> {
+    await this.prisma.category.createMany({
+      data: categories,
+      skipDuplicates: true
+    });
   }
 
   async findByName(name: string): Promise<Category> {
@@ -32,7 +60,17 @@ class CategoriesRepository implements ICategoriesRepository {
     return category;
   }
 
-  async findById(id: string): Promise<Category> {
+  async findBySlug(slug: string): Promise<Category> {
+    const category = await this.prisma.category.findUnique({
+      where: {
+        slug
+      }
+    });
+
+    return category;
+  }
+
+  async findById(id: number): Promise<Category> {
     const category = await this.prisma.category.findUnique({
       where: {
         id

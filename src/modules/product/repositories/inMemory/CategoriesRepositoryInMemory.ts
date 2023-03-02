@@ -1,9 +1,11 @@
-import { Category } from "@prisma/client";
-import { v4 as uuidV4 } from 'uuid';
+import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
+import { Category, Image } from "@prisma/client";
 import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRepository";
 
 class CategoriesRepositoryInMemory implements ICategoriesRepository {
   categories: Category[] = [];
+  images: Image[] = [];
+  counter = 0;
 
   async list(): Promise<Category[]> {
     const listOfBrands = this.categories;
@@ -11,17 +13,38 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
     return listOfBrands;
   }
 
-  async create({ name, description }: ICreateCategoryDTO): Promise<Category> {
-    const category: Category = {
-      id: uuidV4(),
+  async create({ 
+    name,
+    description,
+    slug,
+    image,
+    imageId
+  }: ICreateCategoryDTO): Promise<ICategoryDTO> {
+    ++this.counter
+
+    this.images.push(image);
+
+    const category: ICategoryDTO = {
+      id: this.counter,
       name,
       description,
-      createdAt: new Date()
+      slug,
+      createdAt: new Date(),
+      image,
+      imageId
     }
 
     this.categories.push(category);
 
     return category;
+  }
+
+  createMany(categories: ICreateCategoryDTO[]): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  createIfNotExists({ name, description }: ICreateCategoryDTO): Promise<Category> {
+    throw new Error("Method not implemented.");
   }
 
   async findByName(name: string): Promise<Category> {
@@ -30,10 +53,16 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
     return brand;
   }
 
-  async findById(id: string): Promise<Category> {
-    const brand = this.categories.find(brand => brand.id === id);
+  async findById(id: number): Promise<Category> {
+    const category = this.categories.find(category => category.id === id);
 
-    return brand;
+    return category;
+  }
+
+  async findBySlug(slug: string): Promise<Category> {
+    const category = this.categories.find(category => category.slug === slug);
+
+    return category;
   }
 }
 

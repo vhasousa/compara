@@ -20,13 +20,33 @@ model Brand {
 }
 
 model Category {
-  id           String      @id     @default(uuid())
+  id           Int         @id      @default(autoincrement())
   name         String      @unique
   description  String?             
-  createdAt    DateTime            @default(now()) @map("created_at")
-  product    Product[]
+  slug         String      @unique
+  image        Image?               @relation(fields: [imageId], references: [id])
+  imageId      String?     @unique                    @map("image_id")
+  createdAt    DateTime             @default(now())   @map("created_at")
+  product      Product[]
+  subCategory  SubCategory[]
 
   @@map("categories")
+}
+
+model SubCategory {
+  id           Int         @id      @default(autoincrement())
+  name         String      @unique
+  description  String?             
+  slug         String      @unique
+  image        Image?               @relation(fields: [imageId], references: [id])
+  imageId      String?     @unique                   @map("image_id")
+  category     Category             @relation(fields: [categoryId], references: [id])
+  product      Product[]
+  categoryId   Int                                   @map("category_id")
+  createdAt    DateTime              @default(now()) @map("created_at")
+  
+
+  @@map("sub_categories")
 }
 
 model Product {
@@ -35,12 +55,16 @@ model Product {
   volume             String?
   barCode            String    @unique                     @map("bar_code")
   description        String
-  brand              Brand              @relation(fields: [brandId], references: [id])
+  brand              Brand?             @relation(fields: [brandId], references: [id])
   category           Category?          @relation(fields: [categoryId], references: [id])
+  subCategory        SubCategory?       @relation(fields: [subCategoryId], references: [id])
   measurementUnit    MeasurementUnit?   @relation(fields: [measurementUnitId], references: [id])
-  brandId            String                                @map("brand_id")
-  categoryId         String?                               @map("category_id")
-  measurementUnitId  String?                               @map("measurement_unit_id")
+  image              Image?             @relation(fields: [imageId], references: [id])
+  imageId            String?     @unique                   @map("image_id")
+  brandId            String?                               @map("brand_id")
+  categoryId         Int?                                  @map("category_id")
+  subCategoryId      Int?                                  @map("sub_category_id")
+  measurementUnitId  Int?                                  @map("measurement_unit_id")
   createdAt          DateTime             @default(now())  @map("created_at")
   updatedAt          DateTime             @default(now())  @map("updated_at")
 
@@ -48,10 +72,21 @@ model Product {
 }
 
 model MeasurementUnit {
-  id            String      @id     @default(uuid())
-  name          String      @unique
+  id            Int      @id      @default(autoincrement())
+  name          String   @unique
   abbreviation  String
   product    Product[]
 
   @@map("measurement_unit")
+}
+
+model Image {
+  id            String      @id      @default(uuid())
+  originalName  String               @map("original_name")    
+  key           String
+  category      Category?
+  subCategory   SubCategory?
+  product       Product?
+
+  @@map("images")
 }

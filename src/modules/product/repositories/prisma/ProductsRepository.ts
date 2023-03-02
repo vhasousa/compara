@@ -1,12 +1,13 @@
 import { measurementUnits } from "@config/prisma/seed/measurementUnitData";
-import { Product, PrismaClient } from "@prisma/client";
+import { IProductDTO } from "@modules/product/interfaces/dtos/IProductDTO";
+import { Product, PrismaClient, SubCategory } from "@prisma/client";
 
-import { ICreateProductDTO, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
+import { ICreateProductDTO, IImportProducts, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
 
 class ProductsRepository implements IProductsRepository {
   private prisma = new PrismaClient();
 
-  async list(): Promise<IResponseProductDTO[]> {
+  async list(): Promise<Product[]> {
     const products = await this.prisma.product.findMany({
       include: {
         brand: true,
@@ -25,7 +26,9 @@ class ProductsRepository implements IProductsRepository {
     barCode,
     volume,
     brandId,
-    categoryId
+    categoryId,
+    subCategoryId,
+    imageId
   }: ICreateProductDTO): Promise<Product> {
     const product = await this.prisma.product.create({
       data: {
@@ -35,11 +38,20 @@ class ProductsRepository implements IProductsRepository {
         barCode,
         volume,
         brandId,
-        categoryId
+        categoryId,
+        subCategoryId,
+        imageId
       }
     });
 
     return product;
+  }
+
+  async createMany(products: ICreateProductDTO[]): Promise<void> {
+    const test = await this.prisma.product.createMany({
+      data: products,
+      skipDuplicates: true
+    });
   }
 
   async findByBarCode(barCode: string): Promise<Product> {
@@ -50,6 +62,20 @@ class ProductsRepository implements IProductsRepository {
     });
 
     return product;
+  }
+
+  async listBySubCategory(subCategoryId: number): Promise<IProductDTO[]> {
+    const products = await this.prisma.product.findMany({
+      include: {
+        category: true,
+        image: true
+      },
+      where: {
+        subCategoryId
+      }
+    });
+
+    return products;
   }
 }
 

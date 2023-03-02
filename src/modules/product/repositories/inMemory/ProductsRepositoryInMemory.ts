@@ -1,37 +1,52 @@
-import { Brand, Category, MeasurementUnit, Product } from "@prisma/client";
+import { IProductDTO } from "@modules/product/interfaces/dtos/IProductDTO";
+import { Brand, Category, Image, MeasurementUnit, Product, SubCategory } from "@prisma/client";
 import { v4 as uuidV4 } from 'uuid';
-import { ICreateProductDTO, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
+import { ICreateProductDTO, IImportProducts, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
 
 class ProductsRepositoryInMemory implements IProductsRepository {
   brands: Brand[] = [];
-  categories: Category[] = [];
-  measurementUnits: MeasurementUnit[] = [];
+  images: Image[] = [];
   products: Product[] = [];
+  categories: Category[] = [];
+  subCategories: SubCategory[] = [];
+  measurementUnits: MeasurementUnit[] = [];
 
-  async list(): Promise<IResponseProductDTO[]> {
+  async listBySubCategory(subCategoryId: number): Promise<IProductDTO[]> {
     const listOfProducts = this.products.map(product => {
-      const {
-        name,
-        description,
-        measurementUnitId,
-        barCode,
-        volume,
-        brandId,
-        categoryId
-      } = product
+      if (product.subCategoryId === subCategoryId) {
+        const {
+          id,
+          name,
+          description,
+          barCode,
+          volume,
+          imageId,
+          brandId,
+          categoryId,
+          measurementUnitId,
+          subCategoryId,
+          createdAt,
+          updatedAt
+        } = product
 
-      const formmatedProduct: IResponseProductDTO = {
-        name,
-        description,
-        measurementUnit: this.measurementUnits.find(
-          measurementUnit => measurementUnit.id === measurementUnitId),
-        barCode,
-        volume,
-        brand: this.brands.find(brand => brand.id === brandId),
-        category: this.categories.find(category => category.id === categoryId)
+        const formmatedProduct: IProductDTO = {
+          id,
+          brandId,
+          categoryId,
+          createdAt,
+          imageId,
+          measurementUnitId,
+          subCategoryId,
+          updatedAt,
+          name,
+          description,
+          barCode,
+          volume,
+          image: this.images.find(image => image.id === imageId)
+        }
+  
+        return formmatedProduct;
       }
-
-      return formmatedProduct;
     });
 
     return listOfProducts;
@@ -46,11 +61,17 @@ class ProductsRepositoryInMemory implements IProductsRepository {
     volume,
     brandId,
     categoryId,
+    subCategoryId,
+    imageId,
     brand,
-    category
+    category,
+    subCategory,
+    image
   }: ICreateProductDTO): Promise<Product> {
     this.brands.push(brand);
+    this.images.push(image);
     this.categories.push(category);
+    this.subCategories.push(subCategory);
     this.measurementUnits.push(measurementUnit);
 
     const product: Product = { 
@@ -62,6 +83,8 @@ class ProductsRepositoryInMemory implements IProductsRepository {
       volume,
       brandId,
       categoryId,
+      subCategoryId,
+      imageId,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -70,6 +93,10 @@ class ProductsRepositoryInMemory implements IProductsRepository {
     this.products.push(product);
 
     return product;
+  }
+
+  createMany(products: IImportProducts[]): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async findByBarCode(barCode: string): Promise<Product> {

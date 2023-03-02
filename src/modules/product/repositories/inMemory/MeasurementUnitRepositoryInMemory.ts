@@ -23,7 +23,7 @@ class MeasurementUnitsRepositoryInMemory implements IMeasurementUnitsRepository 
     return listOfBrands;
   }
 
-  async findById(id: string): Promise<MeasurementUnit> {
+  async findById(id: number): Promise<MeasurementUnit> {
     const measurementUnit = this.measurementUnits.find(
       measurementUnit => measurementUnit.id === id);
 

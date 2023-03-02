@@ -9,9 +9,15 @@ class CreateCategoryController {
   }
 
   async handle(request: Request, response: Response): Promise<Response> {
-    const { name, description } = request.body; 
+    const { name, description } = request.body;
+    const { originalname, filename } = request.file;
 
-    const category = await this.createCategoryUseCase.execute({ name, description });
+    const category = await this.createCategoryUseCase.execute({ 
+      name,
+      description,
+      originalName: originalname,
+      key: filename
+    });
 
     if (!category.isSuccess) {
       return response.status(400).json(category.error);
