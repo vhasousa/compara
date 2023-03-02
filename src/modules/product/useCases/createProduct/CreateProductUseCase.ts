@@ -6,6 +6,8 @@ import { IMeasurementUnitsRepository } from "@modules/product/repositories/IMeas
 import { IProductsRepository } from "@modules/product/repositories/IProductsRepository"
 import { ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository"
 import { Product } from "@prisma/client"
+import { LocalStorageProvider } from "@shared/StorageProvider/implementations/LocalStorageProvider"
+import { IStorageProvider } from "@shared/StorageProvider/IStorageProvider"
 import { CreateProductValidation } from "./CreateProductValidation"
 
 interface IRequest {
@@ -29,6 +31,7 @@ class CreateProductUseCase {
   private subCategoriesRepository: ISubCategoriesRepository;
   private imagesRepository: IImagesRepository;
   private createProductsValidation: CreateProductValidation;
+  private storageProvider: IStorageProvider;
   
   constructor(
     productsRepository: IProductsRepository,
@@ -44,6 +47,7 @@ class CreateProductUseCase {
     this.subCategoriesRepository = subCategoriesRepository;
     this.measurementUnitsRepository = measurementUnitsRepository;
     this.imagesRepository = imagesRepository;
+    this.storageProvider = new LocalStorageProvider();
     this.createProductsValidation = new CreateProductValidation();
   }
 
@@ -71,16 +75,19 @@ class CreateProductUseCase {
         subCategory);
       
       if (!brandExists.isSuccess) {
+        await this.storageProvider.unlinkImage(key);
         return brandExists;
       }
       
       if (!subCategoryExists.isSuccess) {
+        await this.storageProvider.unlinkImage(key);
         return subCategoryExists;
       }
       
       const productExists = this.createProductsValidation.productExists(product)
       
       if (!productExists.isSuccess) {
+        await this.storageProvider.unlinkImage(key);
         return productExists;
       }
     }

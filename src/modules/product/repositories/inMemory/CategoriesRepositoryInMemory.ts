@@ -54,13 +54,15 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
   }
 
   async findById(id: number): Promise<Category> {
-    const brand = this.categories.find(brand => brand.id === id);
+    const category = this.categories.find(category => category.id === id);
 
-    return brand;
+    return category;
   }
 
-  findBySlug(slug: string): Promise<Category> {
-    throw new Error("Method not implemented.");
+  async findBySlug(slug: string): Promise<Category> {
+    const category = this.categories.find(category => category.slug === slug);
+
+    return category;
   }
 }
 

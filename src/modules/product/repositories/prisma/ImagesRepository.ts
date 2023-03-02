@@ -18,6 +18,16 @@ class ImagesRepository implements IImagesRepository {
 
     return newsImage;
   }
+
+  async findById(id: string): Promise<Image> {
+    const image = await this.prisma.image.findUnique({
+      where: {
+        id
+      }
+    });
+
+    return image;
+  }
 }
 
 export { ImagesRepository };

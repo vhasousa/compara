@@ -1,15 +1,26 @@
 import { resolve } from 'path';
 
-import { PrismaClient } from '@prisma/client';
 import request from 'supertest';
 import { v4 as uuidV4 } from 'uuid';
-import { main } from '../../../../../prisma/seed';
 
+import { PrismaClient } from '@prisma/client';
 import { app } from "../../../../app";
+import { IStorageProvider } from '@shared/StorageProvider/IStorageProvider';
+import { IImagesRepository } from '@modules/product/repositories/IImagesRepository';
+import { LocalStorageProvider } from '@shared/StorageProvider/implementations/LocalStorageProvider';
+import { ImagesRepository } from '@modules/product/repositories/prisma/ImagesRepository';
 
 const prisma = new PrismaClient();
 
+let localStorage: IStorageProvider
+let imagesRepository: IImagesRepository;
+
 describe("Create products", () => {
+
+  beforeEach(() => {
+    localStorage = new LocalStorageProvider();
+    imagesRepository = new ImagesRepository();
+  })
 
   it("should be able to create a product", async () => {
     const measurementUnits = await prisma.measurementUnit.create({
@@ -60,6 +71,14 @@ describe("Create products", () => {
       .field('measurementUnitId', measurementUnits.id)
       .attach('image', filePath)
       .expect(201);
+
+    const categoryImage = await imagesRepository.findById(category.body.imageId)
+    const subCategoryImage = await imagesRepository.findById(subCategory.body.imageId)
+    const productImage = await imagesRepository.findById(response.body.imageId)
+
+    await localStorage.unlinkImage(categoryImage.key);
+    await localStorage.unlinkImage(subCategoryImage.key);
+    await localStorage.unlinkImage(productImage.key);
 
     expect(response.body.name).toEqual("Product Name");
     expect(response.body.barCode).toEqual("1111111111111");
@@ -119,6 +138,12 @@ describe("Create products", () => {
       .attach('image', filePath)
       .expect(400);
 
+    const categoryImage = await imagesRepository.findById(category.body.imageId)
+    const subCategoryImage = await imagesRepository.findById(subCategory.body.imageId)
+
+    await localStorage.unlinkImage(categoryImage.key);
+    await localStorage.unlinkImage(subCategoryImage.key);
+
     expect(response.body.type).toEqual("brand.not.found");
     expect(response.body.field).toEqual("brandId");
   });
@@ -172,6 +197,12 @@ describe("Create products", () => {
       .field('measurementUnitId', measurementUnits.id)
       .attach('image', filePath)
       .expect(400);
+
+    const categoryImage = await imagesRepository.findById(category.body.imageId)
+    const subCategoryImage = await imagesRepository.findById(subCategory.body.imageId)
+
+    await localStorage.unlinkImage(categoryImage.key);
+    await localStorage.unlinkImage(subCategoryImage.key);
 
     expect(response.body.type).toEqual("subCategory.not.found");
     expect(response.body.field).toEqual("subCategoryId");

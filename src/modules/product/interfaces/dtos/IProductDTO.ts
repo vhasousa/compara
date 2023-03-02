@@ -14,4 +14,5 @@ export interface IProductDTO {
   createdAt: Date
   updatedAt: Date
   image: Image
+  slug?: string
 }

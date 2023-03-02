@@ -17,6 +17,12 @@ class ImagesRepositoryInMemory implements IImagesRepository {
     return createdImage;
   }
 
+  async findById(id: string): Promise<Image> {
+    const image = this.images.find(image => image.id === id);
+
+    return image;
+  }
+
 }
 
 export { ImagesRepositoryInMemory }

@@ -44,6 +44,7 @@ interface IResponseProductDTO {
   createdAt?: Date
   updatedAt?: Date
   imageUrl: string
+  slug?: string
 }
 
 interface IProductsRepository {

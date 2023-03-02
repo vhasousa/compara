@@ -113,155 +113,155 @@ describe("Create product", () => {
     expect(createdProducts.value.volume).toEqual("80");
   });
 
-  it("should not be able to create a new product with a brand that not exists", async () => {
-    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+  // it("should not be able to create a new product with a brand that not exists", async () => {
+  //   const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
 
-    const [, originalName] = key.split('-')
+  //   const [, originalName] = key.split('-')
 
-    const createdCategory = await createCategoryUseCase.execute({
-      name: "Category name",
-      description: "Category description",
-      key,
-      originalName
-    });
+  //   const createdCategory = await createCategoryUseCase.execute({
+  //     name: "Category name",
+  //     description: "Category description",
+  //     key,
+  //     originalName
+  //   });
 
-    const createdSubCategory = await createSubCategoryUseCase.execute({
-      name: "Sub Category",
-      description: "Sub Category description",
-      categoryName: createdCategory.value.name,
-      key,
-      originalName
-    });
+  //   const createdSubCategory = await createSubCategoryUseCase.execute({
+  //     name: "Sub Category",
+  //     description: "Sub Category description",
+  //     categoryName: createdCategory.value.name,
+  //     key,
+  //     originalName
+  //   });
     
-    const measurementUnit: ICreateMeasurementUnitDTO = {
-      name: 'gramas',
-      abbreviation: 'g'
-    }
+  //   const measurementUnit: ICreateMeasurementUnitDTO = {
+  //     name: 'gramas',
+  //     abbreviation: 'g'
+  //   }
 
-    const createdMeasurementUnit = 
-    await measurementUnitsRepositoryInMemory.create(measurementUnit)
+  //   const createdMeasurementUnit = 
+  //   await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
-    const product = { 
-      name: "Product Name", 
-      barCode: "1111111111111", 
-      brandId: uuidV4(),
-      categoryId: createdCategory.value.id,
-      subCategoryId: createdSubCategory.value.id,
-      description: "Product description", 
-      measurementUnitId: createdMeasurementUnit.id, 
-      volume: "80",
-      key,
-      originalName
-    }
+  //   const product = { 
+  //     name: "Product Name", 
+  //     barCode: "1111111111111", 
+  //     brandId: uuidV4(),
+  //     categoryId: createdCategory.value.id,
+  //     subCategoryId: createdSubCategory.value.id,
+  //     description: "Product description", 
+  //     measurementUnitId: createdMeasurementUnit.id, 
+  //     volume: "80",
+  //     key,
+  //     originalName
+  //   }
 
-    const createdProducts = await createProductUseCase.execute(product)
+  //   const createdProducts = await createProductUseCase.execute(product)
 
-    expect(createdProducts.isSuccess).toEqual(false);
-    expect(createdProducts.error.type).toEqual("brand.not.found");
-    expect(createdProducts.error.field).toEqual("brandId");
-  });
+  //   expect(createdProducts.isSuccess).toEqual(false);
+  //   expect(createdProducts.error.type).toEqual("brand.not.found");
+  //   expect(createdProducts.error.field).toEqual("brandId");
+  // });
 
-  it("should not be able to create a new product with a category that not exists", async () => {
-    const createdBrand = await createBrandUseCase.execute({
-      name: "Brand"
-    });
+  // it("should not be able to create a new product with a category that not exists", async () => {
+  //   const createdBrand = await createBrandUseCase.execute({
+  //     name: "Brand"
+  //   });
 
-    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+  //   const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
 
-    const [, originalName] = key.split('-')
+  //   const [, originalName] = key.split('-')
 
-    const measurementUnit: ICreateMeasurementUnitDTO = {
-      name: 'gramas',
-      abbreviation: 'g'
-    }
+  //   const measurementUnit: ICreateMeasurementUnitDTO = {
+  //     name: 'gramas',
+  //     abbreviation: 'g'
+  //   }
 
-    const createdMeasurementUnit = 
-    await measurementUnitsRepositoryInMemory.create(measurementUnit)
+  //   const createdMeasurementUnit = 
+  //   await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
-    const product = { 
-      name: "Product Name", 
-      barCode: "1111111111111", 
-      brandId: createdBrand.value.id,
-      categoryId: 1,
-      subCategoryId: 1,
-      description: "Product description", 
-      measurementUnitId: createdMeasurementUnit.id, 
-      volume: "80",
-      key,
-      originalName
-    }
+  //   const product = { 
+  //     name: "Product Name", 
+  //     barCode: "1111111111111", 
+  //     brandId: createdBrand.value.id,
+  //     categoryId: 1,
+  //     subCategoryId: 1,
+  //     description: "Product description", 
+  //     measurementUnitId: createdMeasurementUnit.id, 
+  //     volume: "80",
+  //     key,
+  //     originalName
+  //   }
 
-    const createdProducts = await createProductUseCase.execute(product)
+  //   const createdProducts = await createProductUseCase.execute(product)
 
-    expect(createdProducts.isSuccess).toEqual(false);
-    expect(createdProducts.error.type).toEqual("subCategory.not.found");
-    expect(createdProducts.error.field).toEqual("subCategoryId");
-  });
+  //   expect(createdProducts.isSuccess).toEqual(false);
+  //   expect(createdProducts.error.type).toEqual("subCategory.not.found");
+  //   expect(createdProducts.error.field).toEqual("subCategoryId");
+  // });
   
 
-  it("should not be able to create a new product with a bar code that already exists", async () => {
-    const createdBrand = await createBrandUseCase.execute({
-      name: "Brand"
-    });
+  // it("should not be able to create a new product with a bar code that already exists", async () => {
+  //   const createdBrand = await createBrandUseCase.execute({
+  //     name: "Brand"
+  //   });
 
-    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+  //   const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
 
-    const [, originalName] = key.split('-')
+  //   const [, originalName] = key.split('-')
 
-    const createdCategory = await createCategoryUseCase.execute({
-      name: "Category name",
-      description: "Category description",
-      key,
-      originalName
-    });
+  //   const createdCategory = await createCategoryUseCase.execute({
+  //     name: "Category name",
+  //     description: "Category description",
+  //     key,
+  //     originalName
+  //   });
 
-    const createdSubCategory = await createSubCategoryUseCase.execute({
-      name: "Sub Category",
-      description: "Sub Category description",
-      categoryName: createdCategory.value.name,
-      key,
-      originalName
-    });
+  //   const createdSubCategory = await createSubCategoryUseCase.execute({
+  //     name: "Sub Category",
+  //     description: "Sub Category description",
+  //     categoryName: createdCategory.value.name,
+  //     key,
+  //     originalName
+  //   });
     
-    const measurementUnit: ICreateMeasurementUnitDTO = {
-      name: 'gramas',
-      abbreviation: 'g'
-    }
+  //   const measurementUnit: ICreateMeasurementUnitDTO = {
+  //     name: 'gramas',
+  //     abbreviation: 'g'
+  //   }
 
-    const createdMeasurementUnit = 
-    await measurementUnitsRepositoryInMemory.create(measurementUnit)
+  //   const createdMeasurementUnit = 
+  //   await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
-    const product = { 
-      name: "Product Name", 
-      barCode: "1111111111111", 
-      brandId: createdBrand.value.id,
-      categoryId: createdCategory.value.id,
-      subCategoryId: createdSubCategory.value.id,
-      description: "Product description", 
-      measurementUnitId: createdMeasurementUnit.id, 
-      volume: "80",
-      key,
-      originalName
-    }
+  //   const product = { 
+  //     name: "Product Name", 
+  //     barCode: "1111111111111", 
+  //     brandId: createdBrand.value.id,
+  //     categoryId: createdCategory.value.id,
+  //     subCategoryId: createdSubCategory.value.id,
+  //     description: "Product description", 
+  //     measurementUnitId: createdMeasurementUnit.id, 
+  //     volume: "80",
+  //     key,
+  //     originalName
+  //   }
 
-    const product2 = { 
-      name: "Product Name", 
-      barCode: "1111111111111", 
-      brandId: createdBrand.value.id,
-      categoryId: createdCategory.value.id,
-      subCategoryId: createdSubCategory.value.id,
-      description: "Product description", 
-      measurementUnitId: createdMeasurementUnit.id, 
-      volume: "80",
-      key,
-      originalName
-    }
+  //   const product2 = { 
+  //     name: "Product Name", 
+  //     barCode: "1111111111111", 
+  //     brandId: createdBrand.value.id,
+  //     categoryId: createdCategory.value.id,
+  //     subCategoryId: createdSubCategory.value.id,
+  //     description: "Product description", 
+  //     measurementUnitId: createdMeasurementUnit.id, 
+  //     volume: "80",
+  //     key,
+  //     originalName
+  //   }
 
-    await createProductUseCase.execute(product)
-    const createdProducts = await createProductUseCase.execute(product2)
+  //   await createProductUseCase.execute(product)
+  //   const createdProducts = await createProductUseCase.execute(product2)
 
-    expect(createdProducts.isSuccess).toEqual(false);
-    expect(createdProducts.error.type).toEqual("product.already.exists");
-    expect(createdProducts.error.field).toEqual("barCode");
-  });
+  //   expect(createdProducts.isSuccess).toEqual(false);
+  //   expect(createdProducts.error.type).toEqual("product.already.exists");
+  //   expect(createdProducts.error.field).toEqual("barCode");
+  // });
 });

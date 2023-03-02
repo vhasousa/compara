@@ -5,6 +5,8 @@ import { ICategoriesRepository } from "@modules/product/repositories/ICategories
 import { CreateCategoryValidation } from "./CreateCategoryValidation";
 import { IImagesRepository } from "@modules/product/repositories/IImagesRepository";
 import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
+import { IStorageProvider } from "@shared/StorageProvider/IStorageProvider";
+import { LocalStorageProvider } from "@shared/StorageProvider/implementations/LocalStorageProvider";
 
 interface IRequest {
   name: string
@@ -16,6 +18,7 @@ interface IRequest {
 class CreateCategoryUseCase {
   private categoriesRepository: ICategoriesRepository;
   private imagesRepository: IImagesRepository;
+  private storageProvider: IStorageProvider;
   private createCategoryValidation: CreateCategoryValidation;
   
   constructor(
@@ -24,6 +27,7 @@ class CreateCategoryUseCase {
     ) {
     this.categoriesRepository = createCategoryRepository;
     this.imagesRepository = imagesRepository;
+    this.storageProvider = new LocalStorageProvider();
     this.createCategoryValidation = new CreateCategoryValidation();
   }
 
@@ -37,9 +41,11 @@ class CreateCategoryUseCase {
 
     if (category) {
       const categoryAlreadyExists = 
-      this.createCategoryValidation.categoryExists(category);
+        this.createCategoryValidation.categoryExists(category);
 
       if (!categoryAlreadyExists.isSuccess) {
+        this.storageProvider.unlinkImage(key);
+
         return categoryAlreadyExists;
       }
     }

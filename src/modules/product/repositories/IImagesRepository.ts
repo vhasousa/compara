@@ -9,7 +9,7 @@ interface IImagesRepository {
   create({ originalName, key }: ICreateImagesDTO): Promise<Image>;
   // save(data: ICreateNewsImagesDTO): Promise<NewsImage>;
   // list(newsId: string): Promise<NewsImage[]>;
-  // findById(id: string): Promise<NewsImage>;
+  findById(id: string): Promise<Image>;
   // findByIds(ids: string[]): Promise<NewsImage[]>;
   // findByKey(key: string): Promise<NewsImage>;
   // delete(id: string): Promise<void>;
