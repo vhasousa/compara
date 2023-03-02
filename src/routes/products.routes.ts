@@ -3,7 +3,6 @@ import { Router } from "express";
 import multer from 'multer';
 
 import { createProductController } from "@modules/product/useCases/createProduct";
-import { listProductsController } from "@modules/product/useCases/listProducts";
 import { importProductsController } from "@modules/product/useCases/importProducts";
 
 import uploadConfig from '@config/upload'
@@ -16,10 +15,6 @@ const upload = multer(uploadConfig);
 
 productsRoutes.post('/', upload.single('image'), (request, response) => {
   return createProductController.handle(request, response);
-});
-
-productsRoutes.get('/', (request, response) => {
-  return listProductsController.handle(request, response);
 });
 
 productsRoutes.get('/:subCategorySlug', (request, response) => {

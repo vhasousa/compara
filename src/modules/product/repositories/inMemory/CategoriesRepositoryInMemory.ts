@@ -1,3 +1,4 @@
+import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
 import { Category, Image } from "@prisma/client";
 import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRepository";
 
@@ -18,12 +19,12 @@ class CategoriesRepositoryInMemory implements ICategoriesRepository {
     slug,
     image,
     imageId
-  }: ICreateCategoryDTO): Promise<Category> {
+  }: ICreateCategoryDTO): Promise<ICategoryDTO> {
     ++this.counter
 
     this.images.push(image);
 
-    const category: Category = {
+    const category: ICategoryDTO = {
       id: this.counter,
       name,
       description,

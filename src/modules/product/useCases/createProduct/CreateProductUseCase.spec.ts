@@ -11,13 +11,16 @@ import { MeasurementUnit } from '@prisma/client';
 import { MeasurementUnitsRepositoryInMemory } from '@modules/product/repositories/inMemory/MeasurementUnitRepositoryInMemory';
 import { CreateSubCategoryUseCase } from '../createSubCategory/CreateSubCategoryUseCase';
 import { SubCategoriesRepositoryInMemory } from '@modules/product/repositories/inMemory/SubCategoriesRepositoryInMemory';
+import { ImagesRepositoryInMemory } from '@modules/product/repositories/inMemory/ImagesRepositoryInMemory';
+import { ICreateMeasurementUnitDTO } from '@modules/product/repositories/IMeasurementUnitsRepository';
 
 let createBrandUseCase: CreateBrandsUseCase;
 let createProductUseCase: CreateProductUseCase;
 let createCategoryUseCase: CreateCategoryUseCase;
 let createSubCategoryUseCase: CreateSubCategoryUseCase;
-let productsRepositoryInMemory: ProductsRepositoryInMemory;
+let imagesRepositoryInMemory: ImagesRepositoryInMemory;
 let brandsRepositoryInMemory: BrandsRepositoryInMemory;
+let productsRepositoryInMemory: ProductsRepositoryInMemory;
 let categoriesRepositoryInMemory: CategoriesRepositoryInMemory;
 let subCategoriesRepositoryInMemory: SubCategoriesRepositoryInMemory;
 let measurementUnitsRepositoryInMemory: MeasurementUnitsRepositoryInMemory;
@@ -30,11 +33,16 @@ describe("Create product", () => {
     categoriesRepositoryInMemory = new CategoriesRepositoryInMemory();
     subCategoriesRepositoryInMemory = new SubCategoriesRepositoryInMemory();
     measurementUnitsRepositoryInMemory = new MeasurementUnitsRepositoryInMemory();
-    createCategoryUseCase = new CreateCategoryUseCase(categoriesRepositoryInMemory);
+    imagesRepositoryInMemory = new ImagesRepositoryInMemory();
+    createCategoryUseCase = new CreateCategoryUseCase(
+      categoriesRepositoryInMemory,
+      imagesRepositoryInMemory
+    );
     createSubCategoryUseCase = new CreateSubCategoryUseCase(
-      subCategoriesRepositoryInMemory, 
-      categoriesRepositoryInMemory
-      );
+      subCategoriesRepositoryInMemory,
+      categoriesRepositoryInMemory,
+      imagesRepositoryInMemory
+    );
     createBrandUseCase = new CreateBrandsUseCase(brandsRepositoryInMemory);
     createBrandUseCase = new CreateBrandsUseCase(brandsRepositoryInMemory);
     createProductUseCase = new CreateProductUseCase(
@@ -42,7 +50,8 @@ describe("Create product", () => {
       brandsRepositoryInMemory,
       categoriesRepositoryInMemory,
       subCategoriesRepositoryInMemory,
-      measurementUnitsRepositoryInMemory
+      measurementUnitsRepositoryInMemory,
+      imagesRepositoryInMemory
       );
   })
 
@@ -51,22 +60,32 @@ describe("Create product", () => {
       name: "Brand"
     });
 
+    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+
+    const [, originalName] = key.split('-')
+
     const createdCategory = await createCategoryUseCase.execute({
       name: "Category name",
-      description: "Category description"
+      description: "Category description",
+      key,
+      originalName
     });
 
     const createdSubCategory = await createSubCategoryUseCase.execute({
       name: "Sub Category",
       description: "Sub Category description",
-      categoryName: createdCategory.value.name
+      categoryName: createdCategory.value.name,
+      key,
+      originalName
     });
     
-    const measurementUnit: MeasurementUnit = {
-      id: uuidV4(),
+    const measurementUnit: ICreateMeasurementUnitDTO = {
       name: 'gramas',
       abbreviation: 'g'
-    }    
+    }
+
+    const createdMeasurementUnit = 
+    await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
     const product = { 
       name: "Product Name", 
@@ -75,8 +94,10 @@ describe("Create product", () => {
       categoryId: createdCategory.value.id,
       subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
-      measurementUnitId: measurementUnit.id, 
+      measurementUnitId: createdMeasurementUnit.id, 
       volume: "80",
+      key,
+      originalName
     }
 
     const createdProducts = await createProductUseCase.execute(product)
@@ -88,27 +109,37 @@ describe("Create product", () => {
     expect(createdProducts.value.categoryId).toEqual(createdCategory.value.id);
     expect(createdProducts.value.subCategoryId).toEqual(createdSubCategory.value.id);
     expect(createdProducts.value.description).toEqual("Product description");
-    expect(createdProducts.value.measurementUnitId).toEqual(measurementUnit.id);
+    expect(createdProducts.value.measurementUnitId).toEqual(createdMeasurementUnit.id);
     expect(createdProducts.value.volume).toEqual("80");
   });
 
   it("should not be able to create a new product with a brand that not exists", async () => {
+    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+
+    const [, originalName] = key.split('-')
+
     const createdCategory = await createCategoryUseCase.execute({
       name: "Category name",
-      description: "Category description"
+      description: "Category description",
+      key,
+      originalName
     });
 
     const createdSubCategory = await createSubCategoryUseCase.execute({
       name: "Sub Category",
       description: "Sub Category description",
-      categoryName: createdCategory.value.name
+      categoryName: createdCategory.value.name,
+      key,
+      originalName
     });
-
-    const measurementUnit: MeasurementUnit = {
-      id: uuidV4(),
+    
+    const measurementUnit: ICreateMeasurementUnitDTO = {
       name: 'gramas',
       abbreviation: 'g'
-    }    
+    }
+
+    const createdMeasurementUnit = 
+    await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
     const product = { 
       name: "Product Name", 
@@ -117,8 +148,10 @@ describe("Create product", () => {
       categoryId: createdCategory.value.id,
       subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
-      measurementUnitId: measurementUnit.id, 
+      measurementUnitId: createdMeasurementUnit.id, 
       volume: "80",
+      key,
+      originalName
     }
 
     const createdProducts = await createProductUseCase.execute(product)
@@ -133,20 +166,29 @@ describe("Create product", () => {
       name: "Brand"
     });
 
-    const measurementUnit: MeasurementUnit = {
-      id: uuidV4(),
+    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+
+    const [, originalName] = key.split('-')
+
+    const measurementUnit: ICreateMeasurementUnitDTO = {
       name: 'gramas',
       abbreviation: 'g'
-    }    
+    }
+
+    const createdMeasurementUnit = 
+    await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
     const product = { 
       name: "Product Name", 
       barCode: "1111111111111", 
       brandId: createdBrand.value.id,
-      subCategoryId: 100,
+      categoryId: 1,
+      subCategoryId: 1,
       description: "Product description", 
-      measurementUnitId: measurementUnit.id, 
+      measurementUnitId: createdMeasurementUnit.id, 
       volume: "80",
+      key,
+      originalName
     }
 
     const createdProducts = await createProductUseCase.execute(product)
@@ -162,22 +204,32 @@ describe("Create product", () => {
       name: "Brand"
     });
 
+    const key = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
+
+    const [, originalName] = key.split('-')
+
     const createdCategory = await createCategoryUseCase.execute({
       name: "Category name",
-      description: "Category description"
+      description: "Category description",
+      key,
+      originalName
     });
 
     const createdSubCategory = await createSubCategoryUseCase.execute({
       name: "Sub Category",
       description: "Sub Category description",
-      categoryName: createdCategory.value.name
+      categoryName: createdCategory.value.name,
+      key,
+      originalName
     });
-
-    const measurementUnit: MeasurementUnit = {
-      id: uuidV4(),
+    
+    const measurementUnit: ICreateMeasurementUnitDTO = {
       name: 'gramas',
       abbreviation: 'g'
     }
+
+    const createdMeasurementUnit = 
+    await measurementUnitsRepositoryInMemory.create(measurementUnit)
 
     const product = { 
       name: "Product Name", 
@@ -186,8 +238,10 @@ describe("Create product", () => {
       categoryId: createdCategory.value.id,
       subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
-      measurementUnitId: measurementUnit.id, 
+      measurementUnitId: createdMeasurementUnit.id, 
       volume: "80",
+      key,
+      originalName
     }
 
     const product2 = { 
@@ -197,8 +251,10 @@ describe("Create product", () => {
       categoryId: createdCategory.value.id,
       subCategoryId: createdSubCategory.value.id,
       description: "Product description", 
-      measurementUnitId: measurementUnit.id, 
+      measurementUnitId: createdMeasurementUnit.id, 
       volume: "80",
+      key,
+      originalName
     }
 
     await createProductUseCase.execute(product)

@@ -11,9 +11,9 @@ import { CreateProductValidation } from "./CreateProductValidation"
 interface IRequest {
   name: string
   description?: string
-  measurementUnitId?: string
+  measurementUnitId?: number
   categoryId?: number
-  subCategoryId?: string
+  subCategoryId?: number
   barCode: string
   volume?: string
   brandId: string
@@ -60,9 +60,9 @@ class CreateProductUseCase {
   }: IRequest): Promise<IValidationMessage<Product>> {
     const brand = await this.brandsRepository.findById(brandId);
     const subCategory = await this.subCategoriesRepository.findById(
-      parseInt(subCategoryId));
+      subCategoryId);
     const measurementUnit = await this.measurementUnitsRepository.findById(
-      parseInt(measurementUnitId));
+      measurementUnitId);
     const product = await this.productsRepository.findByBarCode(barCode);
 
     if (!brand || product || !subCategory) {
@@ -99,10 +99,11 @@ class CreateProductUseCase {
       brandId,
       categoryId: category.id,
       subCategoryId: subCategory.id,
+      imageId: image.id,
       brand,
       category,
       subCategory,
-      imageId: image.id
+      image
     });
 
     const result: IValidationMessage<Product> = {

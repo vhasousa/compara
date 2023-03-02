@@ -1,8 +1,9 @@
-import { Category } from "@prisma/client";
+import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
 import { IValidationMessage } from "@modules/product/interfaces/IValidationMessage";
+import { Category } from "@prisma/client";
 
 class CreateCategoryValidation {
-  categoryExists(category: Category): IValidationMessage<Category> {
+  categoryExists(category: Category): IValidationMessage<ICategoryDTO> {
     if (category.name) {
       const message = {
         isSuccess: false,
@@ -11,7 +12,6 @@ class CreateCategoryValidation {
           field: 'name',
           message: 'Esse marca já foi cadastrada.'
         },
-        value: category
       }
 
       return message;

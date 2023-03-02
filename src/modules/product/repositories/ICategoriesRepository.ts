@@ -1,4 +1,5 @@
 import { Category, Image } from '@prisma/client';
+import { ICategoryDTO } from '../interfaces/dtos/ICategoryDTO';
 
 interface ICreateCategoryDTO {
   id?: number
@@ -6,16 +7,17 @@ interface ICreateCategoryDTO {
   description?: string
   imageId?: string
   slug: string
-  image: Image
+  image?: Image
 }
 
 interface IImportCategories {
   name: string
+  slug: string
 }
 
 interface ICategoriesRepository {
-  list(): Promise<Category[]>;
-  create({ name, description, imageId, slug }: ICreateCategoryDTO): Promise<Category>;
+  list(): Promise<ICategoryDTO[]>;
+  create({ name, description, imageId, slug }: ICreateCategoryDTO): Promise<ICategoryDTO>;
   createIfNotExists({ name, description }: ICreateCategoryDTO): Promise<Category>;
   createMany(categories: ICreateCategoryDTO[]): Promise<void>;
   findByName(name: string): Promise<Category>;

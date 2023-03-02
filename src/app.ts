@@ -15,8 +15,6 @@ app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-console.log(upload.tmpFolder);
-
 app.use('/', express.static(`${upload.tmpFolder}/`));
 
 app.use(router);

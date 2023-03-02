@@ -1,3 +1,4 @@
+import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
 import { Category, PrismaClient } from "@prisma/client";
 import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesRepository";
 
@@ -5,7 +6,7 @@ import { ICategoriesRepository, ICreateCategoryDTO } from "../ICategoriesReposit
 class CategoriesRepository implements ICategoriesRepository {
   private prisma = new PrismaClient();
 
-  async list(): Promise<Category[]> {
+  async list(): Promise<ICategoryDTO[]> {
     const categories = await this.prisma.category.findMany({
       include: {
         image: true

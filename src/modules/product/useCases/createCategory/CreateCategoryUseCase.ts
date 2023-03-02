@@ -1,12 +1,10 @@
 import slugify from "slugify";
 
-import { Category } from "@prisma/client";
-
 import { IValidationMessage } from "@modules/product/interfaces/IValidationMessage";
 import { ICategoriesRepository } from "@modules/product/repositories/ICategoriesRepository";
 import { CreateCategoryValidation } from "./CreateCategoryValidation";
-import { IStorageProvider } from "@shared/StorageProvider/IStorageProvider";
 import { IImagesRepository } from "@modules/product/repositories/IImagesRepository";
+import { ICategoryDTO } from "@modules/product/interfaces/dtos/ICategoryDTO";
 
 interface IRequest {
   name: string
@@ -34,7 +32,8 @@ class CreateCategoryUseCase {
     description,
     originalName,
     key
-  }: IRequest): Promise<IValidationMessage<Category>> {    const category = await this.categoriesRepository.findByName(name);
+  }: IRequest): Promise<IValidationMessage<ICategoryDTO>> {    
+    const category = await this.categoriesRepository.findByName(name);
 
     if (category) {
       const categoryAlreadyExists = 
@@ -56,7 +55,7 @@ class CreateCategoryUseCase {
     const createdBrand = await this.categoriesRepository.create({ 
       name, description, imageId: image.id, slug, image });
 
-    const result: IValidationMessage<Category> = {
+    const result: IValidationMessage<ICategoryDTO> = {
       isSuccess: true,
       value: createdBrand
     }

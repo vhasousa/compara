@@ -1,4 +1,5 @@
 import { measurementUnits } from "@config/prisma/seed/measurementUnitData";
+import { IProductDTO } from "@modules/product/interfaces/dtos/IProductDTO";
 import { Product, PrismaClient, SubCategory } from "@prisma/client";
 
 import { ICreateProductDTO, IImportProducts, IProductsRepository, IResponseProductDTO } from "../IProductsRepository";
@@ -63,7 +64,7 @@ class ProductsRepository implements IProductsRepository {
     return product;
   }
 
-  async listBySubCategory(subCategoryId: number): Promise<Product[]> {
+  async listBySubCategory(subCategoryId: number): Promise<IProductDTO[]> {
     const products = await this.prisma.product.findMany({
       include: {
         category: true,

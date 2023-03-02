@@ -1,7 +1,3 @@
-import fs from 'fs';
-import { resolve } from 'path';
-import mime from 'mime';
-
 import { CategoriesRepositoryInMemory } from "@modules/product/repositories/inMemory/CategoriesRepositoryInMemory";
 import { ImagesRepositoryInMemory } from "@modules/product/repositories/inMemory/ImagesRepositoryInMemory";
 import { CreateCategoryUseCase } from "./CreateCategoryUseCase";
@@ -43,8 +39,6 @@ describe("Create category", () => {
       originalName
     });
 
-    console.log(createdCategory.value.image);
-
     expect(createdCategory.value).toHaveProperty("name");
     expect(createdCategory.value.name).toEqual("Category name");
     expect(createdCategory.value.description).toEqual("Category description");
@@ -52,19 +46,37 @@ describe("Create category", () => {
     expect(createdCategory.value.image.originalName).toEqual(originalName);
   });
 
-  // it("should not be able to create a new category with a name that already exists", async () => {
-  //   await createCategoryUseCase.execute({
-  //     name: "Category name",
-  //     description: "Category description"
-  //   });
+  it("should not be able to create a new category with a name that already exists", async () => {
+    const file = "6e7921f2bcc01efc3c769a8a4fd43417-doces.png"
 
-  //   const createdCategory = await createCategoryUseCase.execute({
-  //     name: "Category name",
-  //     description: "Category description"
-  //   });
+    const splitedFileName = file.split('-')
 
-  //   expect(createdCategory.error.type).toEqual("category.already.exists");
-  //   expect(createdCategory.error.field).toEqual("name");
-  //   expect(createdCategory.isSuccess).toEqual(false);
-  // });
+    const originalName = splitedFileName[0];
+    const key = splitedFileName[1];
+
+    await createCategoryUseCase.execute({
+      name: "Category name",
+      description: "Category description",
+      key,
+      originalName
+    });
+    
+    await createCategoryUseCase.execute({
+      name: "Category name",
+      description: "Category description",
+      key,
+      originalName
+    });
+
+    const createdCategory = await createCategoryUseCase.execute({
+      name: "Category name",
+      description: "Category description",
+      key,
+      originalName
+    });
+
+    expect(createdCategory.error.type).toEqual("category.already.exists");
+    expect(createdCategory.error.field).toEqual("name");
+    expect(createdCategory.isSuccess).toEqual(false);
+  });
 });

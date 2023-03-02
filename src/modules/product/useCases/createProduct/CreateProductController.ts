@@ -24,11 +24,11 @@ class CreateProductController {
     const product = await this.createProductUseCase.execute({
       name,
       description,
-      measurementUnitId,
+      measurementUnitId: parseInt(measurementUnitId),
       barCode,
       volume,
       brandId,
-      subCategoryId,
+      subCategoryId: parseInt(subCategoryId),
       originalName: originalname,
       key: filename
     });

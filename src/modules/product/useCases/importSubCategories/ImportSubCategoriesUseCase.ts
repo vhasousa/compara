@@ -3,6 +3,7 @@ import { ICategoriesRepository } from "@modules/product/repositories/ICategories
 import fs from "fs";
 import { parse } from 'csv-parse';
 import { ICreateSubCategoryDTO, IImportSubCategories, ISubCategoriesRepository } from "@modules/product/repositories/ISubCategoriesRepository";
+import slugify from "slugify";
 
 class ImportSubCategoriesUseCase {
   private categoriesRepository: ICategoriesRepository;
@@ -55,9 +56,24 @@ class ImportSubCategoriesUseCase {
       
       const createdCategory = category ? category : await this.categoriesRepository.create({
         name: categoryName,
+        slug: slugify(categoryName, {
+          replacement: '-',
+          lower: true,
+          remove: /[*+~.()'"!:@<>-?,]/g,
+        })
       })
 
-      listOfSubCategoriesToCreate.push({ name, categoryId: createdCategory.id });
+      const slug = slugify(name, {
+        replacement: '-',
+        lower: true,
+        remove: /[*+~.()'"!:@<>-?,]/g,
+      })
+
+      listOfSubCategoriesToCreate.push({ 
+        name, 
+        categoryId: createdCategory.id, 
+        slug
+      });
     }
 
     await this.subCategoriesRepository.createMany(listOfSubCategoriesToCreate);

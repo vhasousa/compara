@@ -2,6 +2,7 @@ import { ICategoriesRepository, IImportCategories } from "@modules/product/repos
 
 import fs from "fs";
 import { parse } from 'csv-parse';
+import slugify from "slugify";
 
 class ImportCategoriesUseCase {
   private categoriesRepository: ICategoriesRepository;
@@ -25,9 +26,16 @@ class ImportCategoriesUseCase {
 
       parseFile.on("data", async (line) => {
         const [name] = line;
+
+        const slug = slugify(name, {
+          replacement: '-',
+          lower: true,
+          remove: /[*+~.()'"!:@<>-?,]/g,
+        });
         
         products.push({
           name,
+          slug
         });
       })
       .on("end", () => {

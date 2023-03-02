@@ -2,7 +2,6 @@ import { Router } from "express";
 import multer from "multer";
 
 import { createSubCategoryController } from "@modules/product/useCases/createSubCategory";
-import { listSubCategoriesController } from "@modules/product/useCases/listSubCategories";
 import { importSubCategoriesController } from "@modules/product/useCases/importSubCategories";
 import { listSubCategoriesByCategoryController } from "@modules/product/useCases/listSubCategoriesByCategory";
 
@@ -14,10 +13,6 @@ const upload = multer(uploadConfig);
 
 subCategoriesRoutes.post('/', upload.single('image'), (request, response) => {
   return createSubCategoryController.handle(request, response);
-})
-
-subCategoriesRoutes.get('/', (request, response) => {
-  return listSubCategoriesController.handle(request, response);
 })
 
 subCategoriesRoutes.get('/:categorySlug', (request, response) => {

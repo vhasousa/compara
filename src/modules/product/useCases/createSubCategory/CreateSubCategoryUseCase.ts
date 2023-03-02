@@ -64,7 +64,8 @@ class CreateSubCategoryUseCase {
       categoryId: category.id,
       category,
       imageId: image.id,
-      slug
+      slug,
+      image
     });
 
     const result: IValidationMessage<Category> = {

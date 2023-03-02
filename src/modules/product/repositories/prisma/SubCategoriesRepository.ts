@@ -1,3 +1,4 @@
+import { ISubCategoryDTO } from "@modules/product/interfaces/dtos/ISubCategoryDTO";
 import { PrismaClient, SubCategory } from "@prisma/client";
 import { 
   ICreateSubCategoryDTO, 
@@ -77,7 +78,7 @@ class SubCategoriesRepository implements ISubCategoriesRepository {
     return subCategory;
   }
 
-  async listByCategory(categoryId: number): Promise<SubCategory[]> {
+  async listByCategory(categoryId: number): Promise<ISubCategoryDTO[]> {
     const subCategories = await this.prisma.subCategory.findMany({
       where: { categoryId },
       include: {

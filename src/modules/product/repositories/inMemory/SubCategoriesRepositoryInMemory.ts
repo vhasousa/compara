@@ -1,4 +1,5 @@
-import { Category, SubCategory } from "@prisma/client";
+import { ISubCategoryDTO } from "@modules/product/interfaces/dtos/ISubCategoryDTO";
+import { Category, Image, SubCategory } from "@prisma/client";
 import { v4 as uuidV4 } from 'uuid';
 import { ICreateCategoryDTO } from "../ICategoriesRepository";
 import { ICreateSubCategoryDTO, IResponseSubCategoryDTO, ISubCategoriesRepository } from "../ISubCategoriesRepository";
@@ -6,36 +7,58 @@ import { ICreateSubCategoryDTO, IResponseSubCategoryDTO, ISubCategoriesRepositor
 class SubCategoriesRepositoryInMemory implements ISubCategoriesRepository {
   subCategories: SubCategory[] = [];
   categories: Category[] = [];
+  images: Image[] = [];
   counter = 0;
 
-  async list(): Promise<IResponseSubCategoryDTO[]> {
+  async listByCategory(categoryId: number): Promise<ISubCategoryDTO[]> {
     const listOfSubCategories = this.subCategories.map(subCategory => {
-      const { id, name, description, categoryId } = subCategory;
+      if(subCategory.categoryId === categoryId) {
+        const { id, name, description, imageId, slug, createdAt } = subCategory;
 
-      const formmatedProduct: IResponseSubCategoryDTO  = {
-        id,
-        name,
-        description,
-        category: this.categories.find(category => category.id === categoryId)
+        const formmatedProduct: ISubCategoryDTO  = {
+          id,
+          name,
+          description,
+          category: this.categories.find(category => category.id === categoryId),
+          image: this.images.find(image => image.id === imageId),
+          slug,
+          imageId,
+          categoryId,
+          createdAt
+        }
+
+        return formmatedProduct;
       }
-
-      return formmatedProduct;
     });
 
     return listOfSubCategories;
   }
 
-  async create({ name, description, categoryId, category }: ICreateSubCategoryDTO): Promise<SubCategory> {
+
+  async create({ 
+    name, 
+    description, 
+    categoryId, 
+    category, 
+    image, 
+    imageId, 
+    slug
+  }: ICreateSubCategoryDTO): Promise<ISubCategoryDTO> {
     ++this.counter
 
     this.categories.push(category);
+    this.images.push(image);
 
-    const subCategories: SubCategory = {
+    const subCategories: ISubCategoryDTO = {
       id: this.counter,
       name,
       description,
       categoryId,
-      createdAt: new Date()
+      createdAt: new Date(),
+      imageId,
+      slug,
+      image,
+      category
     }
 
     this.subCategories.push(subCategories);
@@ -57,6 +80,12 @@ class SubCategoriesRepositoryInMemory implements ISubCategoriesRepository {
     const brand = this.subCategories.find(brand => brand.id === id);
 
     return brand;
+  }
+
+  async findBySlug(slug: string): Promise<SubCategory> {
+    const subCategory = this.subCategories.find(subCategory => subCategory.slug === slug);
+
+    return subCategory;
   }
 }
 
