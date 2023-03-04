@@ -35,7 +35,7 @@ model Category {
 
 model SubCategory {
   id           Int         @id      @default(autoincrement())
-  name         String      @unique
+  name         String      
   description  String?             
   slug         String      @unique
   image        Image?               @relation(fields: [imageId], references: [id])

@@ -1,93 +1,92 @@
 import { ISubCategoryDTO } from "@modules/product/interfaces/dtos/ISubCategoryDTO";
 import { PrismaClient, SubCategory } from "@prisma/client";
 import { 
-  ICreateSubCategoryDTO, 
-  IResponseSubCategoryDTO, 
-  ISubCategoriesRepository 
+	ICreateSubCategoryDTO, 
+	ISubCategoriesRepository 
 } from "../ISubCategoriesRepository";
 
 
 class SubCategoriesRepository implements ISubCategoriesRepository {
-  private prisma = new PrismaClient();
+	private prisma = new PrismaClient();
 
-  async list(): Promise<SubCategory[]> {
-    const subCategories = await this.prisma.subCategory.findMany({
-      include: {
-        category: true
-      }
-    });
+	async list(): Promise<SubCategory[]> {
+		const subCategories = await this.prisma.subCategory.findMany({
+			include: {
+				category: true
+			}
+		});
 
-    return subCategories;
-  }
+		return subCategories;
+	}
 
-  async create({ 
-    name, 
-    description, 
-    categoryId,
-    imageId,
-    slug
-  }: ICreateSubCategoryDTO): Promise<SubCategory> {
-    const subCategories = await this.prisma.subCategory.create({
-      data: {
-        name,
-        description,
-        categoryId,
-        imageId,
-        slug
-      }
-    });
+	async create({ 
+		name, 
+		description, 
+		categoryId,
+		imageId,
+		slug
+	}: ICreateSubCategoryDTO): Promise<SubCategory> {
+		const subCategories = await this.prisma.subCategory.create({
+			data: {
+				name,
+				description,
+				categoryId,
+				imageId,
+				slug
+			}
+		});
 
-    return subCategories;
-  }
+		return subCategories;
+	}
 
-  async createMany(subCategories: ICreateSubCategoryDTO[]): Promise<void> {
-    await this.prisma.subCategory.createMany({
-      data: subCategories,
-      skipDuplicates: true
-    });
-  }
+	async createMany(subCategories: ICreateSubCategoryDTO[]): Promise<void> {
+		await this.prisma.subCategory.createMany({
+			data: subCategories,
+			skipDuplicates: true
+		});
+	}
 
-  async findByName(name: string): Promise<SubCategory> {
-    const subCategory = await this.prisma.subCategory.findUnique({
-      where: {
-        name
-      }
-    });
+	async findByName(name: string): Promise<SubCategory> {
+		const subCategory = await this.prisma.subCategory.findUnique({
+			where: {
+				name
+			}
+		});
 
 
-    return subCategory;
-  }
+		return subCategory;
+	}
 
-  async findById(id: number): Promise<SubCategory> {
-    const subCategory = await this.prisma.subCategory.findUnique({
-      where: {
-        id
-      }
-    });
+	async findById(id: number): Promise<SubCategory> {
+		const subCategory = await this.prisma.subCategory.findUnique({
+			where: {
+				id
+			}
+		});
 
-    return subCategory;
-  }
+		return subCategory;
+	}
 
-  async findBySlug(slug: string): Promise<SubCategory> {
-    const subCategory = await this.prisma.subCategory.findUnique({
-      where: {
-        slug
-      }
-    });
+	async findBySlug(slug: string): Promise<SubCategory> {
+		const subCategory = await this.prisma.subCategory.findUnique({
+			where: {
+				slug
+			}
+		});
 
-    return subCategory;
-  }
+		return subCategory;
+	}
 
-  async listByCategory(categoryId: number): Promise<ISubCategoryDTO[]> {
-    const subCategories = await this.prisma.subCategory.findMany({
-      where: { categoryId },
-      include: {
-        image: true
-      }
-    });
+	async listByCategory(categoryId: number): Promise<ISubCategoryDTO[]> {
+		const subCategories = await this.prisma.subCategory.findMany({
+			where: { categoryId },
+			include: {
+				image: true
+			}
+		});
 
-    return subCategories;
-  }
+		return subCategories;
+	}
 }
 
-export { SubCategoriesRepository }
+export { SubCategoriesRepository };

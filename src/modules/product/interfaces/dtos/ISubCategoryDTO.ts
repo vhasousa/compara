@@ -1,4 +1,4 @@
-import { Category, Image } from "@prisma/client"
+import { Category, Image } from "@prisma/client";
 
 export interface ISubCategoryDTO {
   id: number

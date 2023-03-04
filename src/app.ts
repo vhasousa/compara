@@ -1,10 +1,10 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 
-import swaggerUi from 'swagger-ui-express';
+import swaggerUi from "swagger-ui-express";
 
 import { router } from "./routes";
 import swaggerFile from   "./swagger.json";
-import cors from 'cors';
+import cors from "cors";
 import upload from "@config/upload";
 
 const app = express();
@@ -15,8 +15,8 @@ app.use(express.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-app.use('/', express.static(`${upload.tmpFolder}/`));
+app.use("/", express.static(`${upload.tmpFolder}/`));
 
 app.use(router);
 
-export { app }
+export { app };

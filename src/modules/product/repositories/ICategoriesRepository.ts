@@ -1,5 +1,5 @@
-import { Category, Image } from '@prisma/client';
-import { ICategoryDTO } from '../interfaces/dtos/ICategoryDTO';
+import { Category, Image } from "@prisma/client";
+import { ICategoryDTO } from "../interfaces/dtos/ICategoryDTO";
 
 interface ICreateCategoryDTO {
   id?: number
@@ -25,4 +25,4 @@ interface ICategoriesRepository {
   findById(id: number): Promise<Category>;
 }
 
-export { ICategoriesRepository, ICreateCategoryDTO, IImportCategories }
+export { ICategoriesRepository, ICreateCategoryDTO, IImportCategories };

@@ -1,5 +1,5 @@
-import { Brand, Category, Image, MeasurementUnit, Product, SubCategory } from '@prisma/client';
-import { IProductDTO } from '../interfaces/dtos/IProductDTO';
+import { Brand, Category, Image, MeasurementUnit, Product, SubCategory } from "@prisma/client";
+import { IProductDTO } from "../interfaces/dtos/IProductDTO";
 
 interface ICreateProductDTO {
   id?: string
@@ -45,22 +45,23 @@ interface IResponseProductDTO {
   updatedAt?: Date
   imageUrl: string
   slug?: string
+  subCategory: string
 }
 
 interface IProductsRepository {
   create({
-    name,
-    description,
-    measurementUnitId,
-    measurementUnit,
-    barCode,
-    volume,
-    brandId,
-    subCategoryId,
-    brand,
-    subCategory,
-    imageId,
-    image
+  	name,
+  	description,
+  	measurementUnitId,
+  	measurementUnit,
+  	barCode,
+  	volume,
+  	brandId,
+  	subCategoryId,
+  	brand,
+  	subCategory,
+  	imageId,
+  	image
   }: ICreateProductDTO): Promise<Product>;
   createMany(products: ICreateProductDTO[]): Promise<void>;
   findByBarCode(barCode: string): Promise<Product>;
@@ -68,8 +69,8 @@ interface IProductsRepository {
 }
 
 export { 
-  IProductsRepository, 
-  ICreateProductDTO,
-  IResponseProductDTO, 
-  IImportProducts
-}
+	IProductsRepository, 
+	ICreateProductDTO,
+	IResponseProductDTO, 
+	IImportProducts
+};

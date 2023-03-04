@@ -1,4 +1,4 @@
-import { MeasurementUnit } from '@prisma/client';
+import { MeasurementUnit } from "@prisma/client";
 
 interface ICreateMeasurementUnitDTO {
   id?: string
@@ -12,4 +12,4 @@ interface IMeasurementUnitsRepository {
   findById(id: number): Promise<MeasurementUnit>;
 }
 
-export { IMeasurementUnitsRepository, ICreateMeasurementUnitDTO }
+export { IMeasurementUnitsRepository, ICreateMeasurementUnitDTO };

@@ -1,4 +1,4 @@
-import { Brand } from '@prisma/client';
+import { Brand } from "@prisma/client";
 
 interface ICreateBrandDTO {
   name: string;
@@ -11,4 +11,4 @@ interface IBrandsRepository {
   findById(id: string): Promise<Brand>;
 }
 
-export { IBrandsRepository, ICreateBrandDTO }
+export { IBrandsRepository, ICreateBrandDTO };

@@ -1,92 +1,97 @@
 import { ISubCategoryDTO } from "@modules/product/interfaces/dtos/ISubCategoryDTO";
 import { Category, Image, SubCategory } from "@prisma/client";
-import { v4 as uuidV4 } from 'uuid';
 import { ICreateCategoryDTO } from "../ICategoriesRepository";
-import { ICreateSubCategoryDTO, IResponseSubCategoryDTO, ISubCategoriesRepository } from "../ISubCategoriesRepository";
+import { ICreateSubCategoryDTO, ISubCategoriesRepository } from "../ISubCategoriesRepository";
 
 class SubCategoriesRepositoryInMemory implements ISubCategoriesRepository {
-  subCategories: SubCategory[] = [];
-  categories: Category[] = [];
-  images: Image[] = [];
-  counter = 0;
+	subCategories: SubCategory[] = [];
+	categories: Category[] = [];
+	images: Image[] = [];
+	counter = 0;
 
-  async listByCategory(categoryId: number): Promise<ISubCategoryDTO[]> {
-    const listOfSubCategories = this.subCategories.map(subCategory => {
-      if(subCategory.categoryId === categoryId) {
-        const { id, name, description, imageId, slug, createdAt } = subCategory;
+	async list(): Promise<SubCategory[]> {
+		const listOfSubCategories = this.subCategories;
 
-        const formmatedProduct: ISubCategoryDTO  = {
-          id,
-          name,
-          description,
-          category: this.categories.find(category => category.id === categoryId),
-          image: this.images.find(image => image.id === imageId),
-          slug,
-          imageId,
-          categoryId,
-          createdAt
-        }
+		return listOfSubCategories;
+	}
 
-        return formmatedProduct;
-      }
-    });
+	async listByCategory(categoryId: number): Promise<ISubCategoryDTO[]> {
+		const listOfSubCategories = this.subCategories.map(subCategory => {
+			if(subCategory.categoryId === categoryId) {
+				const { id, name, description, imageId, slug, createdAt } = subCategory;
 
-    return listOfSubCategories;
-  }
+				const formmatedProduct: ISubCategoryDTO  = {
+					id,
+					name,
+					description,
+					category: this.categories.find(category => category.id === categoryId),
+					image: this.images.find(image => image.id === imageId),
+					slug,
+					imageId,
+					categoryId,
+					createdAt
+				};
+
+				return formmatedProduct;
+			}
+		});
+
+		return listOfSubCategories;
+	}
 
 
-  async create({ 
-    name, 
-    description, 
-    categoryId, 
-    category, 
-    image, 
-    imageId, 
-    slug
-  }: ICreateSubCategoryDTO): Promise<ISubCategoryDTO> {
-    ++this.counter
+	async create({ 
+		name, 
+		description, 
+		categoryId, 
+		category, 
+		image, 
+		imageId, 
+		slug
+	}: ICreateSubCategoryDTO): Promise<ISubCategoryDTO> {
+		++this.counter;
 
-    this.categories.push(category);
-    this.images.push(image);
+		this.categories.push(category);
+		this.images.push(image);
 
-    const subCategories: ISubCategoryDTO = {
-      id: this.counter,
-      name,
-      description,
-      categoryId,
-      createdAt: new Date(),
-      imageId,
-      slug,
-      image,
-      category
-    }
+		const subCategories: ISubCategoryDTO = {
+			id: this.counter,
+			name,
+			description,
+			categoryId,
+			createdAt: new Date(),
+			imageId,
+			slug,
+			image,
+			category
+		};
 
-    this.subCategories.push(subCategories);
+		this.subCategories.push(subCategories);
 
-    return subCategories;
-  }
+		return subCategories;
+	}
 
-  createMany(categories: ICreateCategoryDTO[]): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
+	createMany(categories: ICreateCategoryDTO[]): Promise<void> {
+		throw new Error("Method not implemented.");
+	}
 
-  async findByName(name: string): Promise<SubCategory> {
-    const brand = this.subCategories.find(brand => brand.name === name);
+	async findByName(name: string): Promise<SubCategory> {
+		const brand = this.subCategories.find(brand => brand.name === name);
 
-    return brand;
-  }
+		return brand;
+	}
 
-  async findById(id: number): Promise<SubCategory> {
-    const brand = this.subCategories.find(brand => brand.id === id);
+	async findById(id: number): Promise<SubCategory> {
+		const brand = this.subCategories.find(brand => brand.id === id);
 
-    return brand;
-  }
+		return brand;
+	}
 
-  async findBySlug(slug: string): Promise<SubCategory> {
-    const subCategory = this.subCategories.find(subCategory => subCategory.slug === slug);
+	async findBySlug(slug: string): Promise<SubCategory> {
+		const subCategory = this.subCategories.find(subCategory => subCategory.slug === slug);
 
-    return subCategory;
-  }
+		return subCategory;
+	}
 }
 
-export { SubCategoriesRepositoryInMemory }
+export { SubCategoriesRepositoryInMemory };

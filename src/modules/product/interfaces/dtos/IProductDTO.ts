@@ -1,4 +1,4 @@
-import { Image } from "@prisma/client"
+import { Image, SubCategory } from "@prisma/client";
 
 export interface IProductDTO {
   id: string
@@ -15,4 +15,5 @@ export interface IProductDTO {
   updatedAt: Date
   image: Image
   slug?: string
+  subCategory: SubCategory
 }

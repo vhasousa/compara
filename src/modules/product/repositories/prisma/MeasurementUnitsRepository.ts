@@ -3,34 +3,34 @@ import { ICreateMeasurementUnitDTO, IMeasurementUnitsRepository } from "../IMeas
 
 
 class MeasurementUnitsRepository implements IMeasurementUnitsRepository {
-  private prisma = new PrismaClient();
+	private prisma = new PrismaClient();
 
-  async create({ name, abbreviation }: ICreateMeasurementUnitDTO): Promise<MeasurementUnit> {
-    const measurementUnit = await this.prisma.measurementUnit.create({
-      data: {
-        name,
-        abbreviation        
-      }
-    });
+	async create({ name, abbreviation }: ICreateMeasurementUnitDTO): Promise<MeasurementUnit> {
+		const measurementUnit = await this.prisma.measurementUnit.create({
+			data: {
+				name,
+				abbreviation        
+			}
+		});
 
-    return measurementUnit;
-  }
+		return measurementUnit;
+	}
 
-  async list(): Promise<MeasurementUnit[]> {
-    const measurementUnits = await this.prisma.measurementUnit.findMany();
+	async list(): Promise<MeasurementUnit[]> {
+		const measurementUnits = await this.prisma.measurementUnit.findMany();
 
-    return measurementUnits;
-  }
+		return measurementUnits;
+	}
 
-  async findById(id: number): Promise<MeasurementUnit> {
-    const measurementUnits = await this.prisma.measurementUnit.findUnique({
-      where: {
-        id
-      }
-    });
+	async findById(id: number): Promise<MeasurementUnit> {
+		const measurementUnits = await this.prisma.measurementUnit.findUnique({
+			where: {
+				id
+			}
+		});
 
-    return measurementUnits;
-  }
+		return measurementUnits;
+	}
 }
 
-export { MeasurementUnitsRepository }
+export { MeasurementUnitsRepository };

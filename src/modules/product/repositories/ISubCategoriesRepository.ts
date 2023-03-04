@@ -1,5 +1,5 @@
-import { Category, Image, SubCategory } from '@prisma/client';
-import { ISubCategoryDTO } from '../interfaces/dtos/ISubCategoryDTO';
+import { Category, Image, SubCategory } from "@prisma/client";
+import { ISubCategoryDTO } from "../interfaces/dtos/ISubCategoryDTO";
 
 interface ICreateSubCategoryDTO {
   name: string
@@ -28,24 +28,19 @@ interface IImportSubCategories {
 }
 
 interface ISubCategoriesRepository {
-  create({ 
-    name, 
-    description, 
-    categoryId, 
-    category,
-    imageId,
-    slug
-  }: ICreateSubCategoryDTO): Promise<SubCategory>;
+  create({ name, description, categoryId, category, imageId, slug }
+    : ICreateSubCategoryDTO): Promise<SubCategory>;
   createMany(subCategories: ICreateSubCategoryDTO[]): Promise<void>;
   findByName(name: string): Promise<SubCategory>;
   findById(id: number): Promise<SubCategory>;
   findBySlug(slug: string): Promise<SubCategory>;
   listByCategory(categoryId: number): Promise<ISubCategoryDTO[]>;
+  list(): Promise<SubCategory[]>
 }
 
 export { 
-  ISubCategoriesRepository, 
-  ICreateSubCategoryDTO, 
-  IResponseSubCategoryDTO,
-  IImportSubCategories
-}
+	ISubCategoriesRepository, 
+	ICreateSubCategoryDTO, 
+	IResponseSubCategoryDTO,
+	IImportSubCategories
+};
